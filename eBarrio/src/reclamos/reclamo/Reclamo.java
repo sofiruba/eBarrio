@@ -2,7 +2,7 @@
 
 public class Reclamo {
 
-    private estadoReclamo estado;
+    private IEstadoReclamo estado;
 
     public Reclamo(){
         this.estado = new EstadoPendiente();
