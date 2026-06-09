@@ -12,8 +12,8 @@ public class EstadoPendiente implements IEstadoReclamo{
 
     @Override
     public void cancelar(Reclamo reclamo) {
-        System.out.println("El reclamo que se encontraba pendiente de asignación ha sido directamente cancelado.");
-        reclamo.setEstado(new EstadoCancelado());
+        System.out.println("El reclamo que se encontraba pendiente de asignación ha sido directamente cerrado.");
+        reclamo.setEstado(new EstadoCerrado());
     }
 
     @Override
