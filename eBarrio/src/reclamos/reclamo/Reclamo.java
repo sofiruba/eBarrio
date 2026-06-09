@@ -1,4 +1,4 @@
-
+package reclamos.reclamo;
 
 public class Reclamo {
 
