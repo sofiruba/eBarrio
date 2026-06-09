@@ -1,5 +1,8 @@
 package reclamos.reclamo;
 
+import reclamos.estados.IEstadoReclamo;
+import reclamos.estados.EstadoPendiente;
+
 public class Reclamo {
 
     private IEstadoReclamo estado;
