@@ -5,16 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoAsignado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoCerrado.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoEnProceso.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoPendiente.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoResuelto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/IEstadoReclamo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/reclamo/Reclamo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reclamos/test/TestReclamo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eBarrio_Integrante1.zip" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +141,7 @@
       <updated>1780484769361</updated>
       <workItem from="1780484770416" duration="2252000" />
       <workItem from="1781054781499" duration="623000" />
-      <workItem from="1781055434317" duration="643000" />
+      <workItem from="1781055434317" duration="1055000" />
     </task>
     <servers />
   </component>
