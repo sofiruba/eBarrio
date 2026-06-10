@@ -1,4 +1,176 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoAsignado.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoCerrado.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoEnProceso.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoPendiente.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/EstadoResuelto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/estados/IEstadoReclamo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/reclamo/Reclamo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reclamos/test/TestReclamo.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0000000000026632" />
+      <entry key="MS500" value="1.0048426082028867" />
+      <entry key="S2" value="1.2637969884954965" />
+      <entry key="S5" value="1.586825122038647" />
+      <entry key="S10" value="1.7674782743158919" />
+      <entry key="S30" value="2.093897116973435" />
+      <entry key="S60" value="2.5546826503088935" />
+      <entry key="M2" value="3.071753317152217" />
+      <entry key="M5" value="3.5621635312928803" />
+      <entry key="M10" value="3.7681400238995275" />
+      <entry key="M15" value="3.8423950387183403" />
+      <entry key="M30" value="3.919640786335857" />
+      <entry key="H1" value="3.9594233445706397" />
+      <entry key="H2" value="3.9796114095689226" />
+      <entry key="H4" value="3.989780512930531" />
+      <entry key="D1" value="3.998293242525487" />
+      <entry key="W1" value="3.9997560914128556" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9201876506273088" />
+      <entry key="MS500" value="0.9882581912866506" />
+      <entry key="S2" value="1.2584608890971467" />
+      <entry key="S5" value="1.5841063291715192" />
+      <entry key="S10" value="1.7659488524312639" />
+      <entry key="S30" value="2.0929955100346227" />
+      <entry key="S60" value="2.553809337552279" />
+      <entry key="M2" value="3.0710671413399466" />
+      <entry key="M5" value="3.561792757800025" />
+      <entry key="M10" value="3.767934276129507" />
+      <entry key="M15" value="3.842252969919684" />
+      <entry key="M30" value="3.919567198802992" />
+      <entry key="H1" value="3.9593858928697574" />
+      <entry key="H2" value="3.979592516719756" />
+      <entry key="H4" value="3.9897710244381366" />
+      <entry key="D1" value="3.998291655240159" />
+      <entry key="W1" value="3.9997558645136997" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3EcjU6MEfVm2ZXAWgMMs8xeBkdr" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.eBarrio.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/libs" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="eBarrio" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="com.ebarrio.app.MainApp" />
+      <module name="eBarrio" />
+      <option name="VM_PARAMETERS" value="--module-path libs/javafx-sdk-17.0.19/lib --add-modules javafx.controls,javafx.fxml" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="" />
+      <created>1780484769361</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1780484769361</updated>
+      <workItem from="1780484770416" duration="2252000" />
+      <workItem from="1781054781499" duration="623000" />
+      <workItem from="1781055434317" duration="643000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Main.java</url>
+          <line>11</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/app/MainApp.java</url>
+          <line>17</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
 </project>
