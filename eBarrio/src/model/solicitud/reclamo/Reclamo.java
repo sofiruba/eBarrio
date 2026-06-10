@@ -1,6 +1,6 @@
-package solicitud.reclamo;
+package model.solicitud.reclamo;
 
-import solicitud.Solicitud;
+import model.solicitud.Solicitud;
 
 public class Reclamo extends Solicitud {
 

@@ -1,11 +1,9 @@
-<<<<<<< HEAD:eBarrio/src/model/barrio/Barrio.java
-package barrio;
-=======
-package model;
->>>>>>> 6779a553611f863ff8525b03762e93965d99491b:eBarrio/src/model/Barrio.java
+
+package model.barrio;
 
 import java.util.ArrayList;
 import java.util.List;
+import model.barrio.*;
 
 public class Barrio {
     private int id;

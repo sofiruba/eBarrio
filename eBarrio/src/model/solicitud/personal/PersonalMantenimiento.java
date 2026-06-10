@@ -1,4 +1,4 @@
-package solicitud.personal;
+package model.solicitud.personal;
 
 public class PersonalMantenimiento {
 

@@ -1,10 +1,7 @@
 package app;
 
-import model.Barrio;
-import model.Residente;
-import model.Visitante;
-import model.Vivienda;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -15,17 +12,34 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import model.barrio.Barrio;
+import model.barrio.Residente;
+import model.barrio.Vivienda;
+import model.accesos.Visitante;
+import model.accesos.Acceso;
+import model.solicitud.Solicitud;
+import model.solicitud.reclamo.Reclamo;
+import sistema.SistemaBarrio;
+
+import java.net.URL;
 import java.util.Optional;
 
 public class MainApp extends Application {
 
     private ObservableList<Residente> residentes = FXCollections.observableArrayList();
     private ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
+    private ObservableList<Solicitud> solicitudes = FXCollections.observableArrayList();
+    private ObservableList<Acceso> accesos = FXCollections.observableArrayList();
 
     private TableView<Residente> tablaResidentes;
     private TableView<Visitante> tablaVisitantes;
+    private TableView<Solicitud> tablaSolicitudes;
+    private TableView<Acceso> tablaAccesos;
 
     private Barrio barrio;
+    private SistemaBarrio sistemaBarrio = new SistemaBarrio();
+
+    private int contadorViviendas = 1;
 
     @Override
     public void start(Stage stage) {
@@ -35,17 +49,27 @@ public class MainApp extends Application {
         root.getStyleClass().add("root-layout");
 
         VBox sidebar = crearMenuLateral();
-        VBox contenido = crearPantallaResidentesVisitantes();
+        VBox contenido = crearPantallaPrincipal();
 
         root.setLeft(sidebar);
         root.setCenter(contenido);
 
-        Scene scene = new Scene(root, 1000, 620);
-        scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
+        Scene scene = new Scene(root, 1100, 680);
+        cargarEstilos(scene);
 
         stage.setTitle("eBarrio - Gestión de Barrio Cerrado");
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void cargarEstilos(Scene scene) {
+        URL css = getClass().getResource("/styles/styles.css");
+
+        if (css != null) {
+            scene.getStylesheets().add(css.toExternalForm());
+        } else {
+            System.out.println("No se encontró styles.css. La app va a abrir sin estilos.");
+        }
     }
 
     private VBox crearMenuLateral() {
@@ -57,21 +81,34 @@ public class MainApp extends Application {
 
         Button btnResidentes = new Button("Residentes");
         Button btnVisitantes = new Button("Visitantes");
-        Button btnReclamos = new Button("Reclamos");
-        Button btnAccesos = new Button("Accesos");
+        Button btnReclamos = new Button("Nuevo reclamo");
+        Button btnAccesos = new Button("Registrar acceso");
+        Button btnAvanzarEstado = new Button("Avanzar estado");
 
         btnResidentes.getStyleClass().add("menu-button");
         btnVisitantes.getStyleClass().add("menu-button");
         btnReclamos.getStyleClass().add("menu-button");
         btnAccesos.getStyleClass().add("menu-button");
+        btnAvanzarEstado.getStyleClass().add("menu-button");
 
-        btnReclamos.setOnAction(e -> mostrarAlerta("Módulo en desarrollo",
-                "El módulo de reclamos será integrado con las clases del otro integrante."));
+        btnResidentes.setOnAction(e -> mostrarAlerta("Residentes", "El módulo de residentes se muestra en la tabla principal."));
+        btnVisitantes.setOnAction(e -> mostrarAlerta("Visitantes", "El módulo de visitantes se muestra en la tabla principal."));
 
-        btnAccesos.setOnAction(e -> mostrarAlerta("Módulo en desarrollo",
-                "El módulo de accesos será integrado en la siguiente etapa."));
+        btnReclamos.setOnAction(e -> mostrarFormularioCrearReclamo());
+        btnAccesos.setOnAction(e -> registrarAccesoVisitanteSeleccionado());
+        btnAvanzarEstado.setOnAction(e -> avanzarEstadoSolicitudSeleccionada());
 
-        VBox sidebar = new VBox(15, logo, subtitulo, btnResidentes, btnVisitantes, btnReclamos, btnAccesos);
+        VBox sidebar = new VBox(
+                15,
+                logo,
+                subtitulo,
+                btnResidentes,
+                btnVisitantes,
+                btnReclamos,
+                btnAccesos,
+                btnAvanzarEstado
+        );
+
         sidebar.setPadding(new Insets(30));
         sidebar.setPrefWidth(250);
         sidebar.getStyleClass().add("sidebar");
@@ -79,42 +116,63 @@ public class MainApp extends Application {
         return sidebar;
     }
 
-    private VBox crearPantallaResidentesVisitantes() {
+    private VBox crearPantallaPrincipal() {
         Label titulo = new Label("Panel inicial");
         titulo.getStyleClass().add("title");
 
-        Label descripcion = new Label("Primer avance funcional del sistema eBarrio. Módulo de residentes, viviendas y visitantes.");
+        Label descripcion = new Label("Primera versión funcional en memoria del sistema eBarrio.");
         descripcion.getStyleClass().add("description");
 
         tablaResidentes = crearTablaResidentes();
         tablaVisitantes = crearTablaVisitantes();
+        tablaSolicitudes = crearTablaSolicitudes();
+        tablaAccesos = crearTablaAccesos();
 
         Button agregarResidente = new Button("Agregar residente");
         Button registrarVisitante = new Button("Registrar visitante");
+        Button crearReclamo = new Button("Crear reclamo");
+        Button registrarAcceso = new Button("Registrar acceso");
 
         agregarResidente.getStyleClass().add("primary-button");
         registrarVisitante.getStyleClass().add("secondary-button");
+        crearReclamo.getStyleClass().add("secondary-button");
+        registrarAcceso.getStyleClass().add("secondary-button");
 
         agregarResidente.setOnAction(e -> mostrarFormularioAgregarResidente());
         registrarVisitante.setOnAction(e -> mostrarFormularioRegistrarVisitante());
+        crearReclamo.setOnAction(e -> mostrarFormularioCrearReclamo());
+        registrarAcceso.setOnAction(e -> registrarAccesoVisitanteSeleccionado());
 
-        HBox botones = new HBox(12, agregarResidente, registrarVisitante);
+        HBox botones = new HBox(12, agregarResidente, registrarVisitante, crearReclamo, registrarAcceso);
         botones.setAlignment(Pos.CENTER_LEFT);
 
-        VBox cardResidentes = new VBox(10, new Label("Residentes"), tablaResidentes);
-        cardResidentes.getStyleClass().add("card");
+        VBox cardResidentes = crearCard("Residentes", tablaResidentes);
+        VBox cardVisitantes = crearCard("Visitantes autorizados", tablaVisitantes);
+        VBox cardSolicitudes = crearCard("Solicitudes / Reclamos", tablaSolicitudes);
+        VBox cardAccesos = crearCard("Accesos registrados", tablaAccesos);
 
-        VBox cardVisitantes = new VBox(10, new Label("Visitantes autorizados"), tablaVisitantes);
-        cardVisitantes.getStyleClass().add("card");
-
-        HBox tablas = new HBox(20, cardResidentes, cardVisitantes);
+        HBox fila1 = new HBox(20, cardResidentes, cardVisitantes);
         HBox.setHgrow(cardResidentes, Priority.ALWAYS);
         HBox.setHgrow(cardVisitantes, Priority.ALWAYS);
 
-        VBox contenido = new VBox(18, titulo, descripcion, botones, tablas);
+        HBox fila2 = new HBox(20, cardSolicitudes, cardAccesos);
+        HBox.setHgrow(cardSolicitudes, Priority.ALWAYS);
+        HBox.setHgrow(cardAccesos, Priority.ALWAYS);
+
+        VBox contenido = new VBox(18, titulo, descripcion, botones, fila1, fila2);
         contenido.setPadding(new Insets(35));
 
         return contenido;
+    }
+
+    private VBox crearCard(String titulo, TableView<?> tabla) {
+        Label label = new Label(titulo);
+        label.getStyleClass().add("card-title");
+
+        VBox card = new VBox(10, label, tabla);
+        card.getStyleClass().add("card");
+
+        return card;
     }
 
     private TableView<Residente> crearTablaResidentes() {
@@ -134,7 +192,7 @@ public class MainApp extends Application {
         colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
 
         tabla.getColumns().addAll(colId, colNombre, colApellido, colDni);
-        tabla.setPrefHeight(300);
+        tabla.setPrefHeight(210);
 
         return tabla;
     }
@@ -156,7 +214,35 @@ public class MainApp extends Application {
         colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivoVisita"));
 
         tabla.getColumns().addAll(colId, colNombre, colDni, colMotivo);
-        tabla.setPrefHeight(300);
+        tabla.setPrefHeight(210);
+
+        return tabla;
+    }
+
+    private TableView<Solicitud> crearTablaSolicitudes() {
+        TableView<Solicitud> tabla = new TableView<>();
+        tabla.setItems(solicitudes);
+
+        TableColumn<Solicitud, String> colDatos = new TableColumn<>("Solicitud");
+        colDatos.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().toString()));
+        colDatos.setPrefWidth(450);
+
+        tabla.getColumns().add(colDatos);
+        tabla.setPrefHeight(210);
+
+        return tabla;
+    }
+
+    private TableView<Acceso> crearTablaAccesos() {
+        TableView<Acceso> tabla = new TableView<>();
+        tabla.setItems(accesos);
+
+        TableColumn<Acceso, String> colDatos = new TableColumn<>("Acceso");
+        colDatos.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().toString()));
+        colDatos.setPrefWidth(450);
+
+        tabla.getColumns().add(colDatos);
+        tabla.setPrefHeight(210);
 
         return tabla;
     }
@@ -184,10 +270,7 @@ public class MainApp extends Application {
         TextField campoLote = new TextField();
         campoLote.setPromptText("Lote / Vivienda");
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(12);
-        grid.setPadding(new Insets(20));
+        GridPane grid = crearGridFormulario();
 
         grid.add(new Label("Nombre:"), 0, 0);
         grid.add(campoNombre, 1, 0);
@@ -247,7 +330,7 @@ public class MainApp extends Application {
         Residente residenteSeleccionado = tablaResidentes.getSelectionModel().getSelectedItem();
 
         if (residenteSeleccionado == null) {
-            mostrarAlerta("Seleccioná un residente", "Primero seleccioná un residente de la tabla para asociarle el visitante.");
+            mostrarAlerta("Seleccioná un residente", "Primero seleccioná un residente de la tabla.");
             return;
         }
 
@@ -267,10 +350,7 @@ public class MainApp extends Application {
         TextField campoMotivo = new TextField();
         campoMotivo.setPromptText("Motivo de visita");
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(12);
-        grid.setPadding(new Insets(20));
+        GridPane grid = crearGridFormulario();
 
         grid.add(new Label("Nombre:"), 0, 0);
         grid.add(campoNombre, 1, 0);
@@ -311,6 +391,107 @@ public class MainApp extends Application {
         }
     }
 
+    private void mostrarFormularioCrearReclamo() {
+        Residente residenteSeleccionado = tablaResidentes.getSelectionModel().getSelectedItem();
+
+        if (residenteSeleccionado == null) {
+            mostrarAlerta("Seleccioná un residente", "Primero seleccioná un residente para crearle un reclamo.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Nuevo reclamo");
+        dialog.setHeaderText("Crear reclamo para: " + residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido());
+
+        TextField campoDescripcion = new TextField();
+        campoDescripcion.setPromptText("Descripción del reclamo");
+
+        ComboBox<String> comboPrioridad = new ComboBox<>();
+        comboPrioridad.getItems().addAll("Baja", "Media", "Alta");
+        comboPrioridad.setValue("Media");
+
+        TextField campoTipo = new TextField();
+        campoTipo.setPromptText("Tipo de reclamo");
+
+        GridPane grid = crearGridFormulario();
+
+        grid.add(new Label("Descripción:"), 0, 0);
+        grid.add(campoDescripcion, 1, 0);
+
+        grid.add(new Label("Prioridad:"), 0, 1);
+        grid.add(comboPrioridad, 1, 1);
+
+        grid.add(new Label("Tipo:"), 0, 2);
+        grid.add(campoTipo, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (campoDescripcion.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "La descripción del reclamo es obligatoria.");
+                return;
+            }
+
+            String nombreResidente = residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido();
+
+            Reclamo reclamo = sistemaBarrio.crearReclamo(
+                    nombreResidente,
+                    campoDescripcion.getText(),
+                    comboPrioridad.getValue(),
+                    campoTipo.getText().isBlank() ? "General" : campoTipo.getText()
+            );
+
+            solicitudes.add(reclamo);
+            tablaSolicitudes.refresh();
+
+            mostrarAlerta("Reclamo creado", "El reclamo fue creado correctamente en memoria.");
+        }
+    }
+
+    private void registrarAccesoVisitanteSeleccionado() {
+        Visitante visitanteSeleccionado = tablaVisitantes.getSelectionModel().getSelectedItem();
+
+        if (visitanteSeleccionado == null) {
+            mostrarAlerta("Seleccioná un visitante", "Primero seleccioná un visitante de la tabla.");
+            return;
+        }
+
+        Acceso acceso = sistemaBarrio.registrarAcceso(
+                visitanteSeleccionado.getNombre(),
+                visitanteSeleccionado.getDni()
+        );
+
+        accesos.add(acceso);
+        tablaAccesos.refresh();
+
+        mostrarAlerta("Acceso registrado", "Se registró el ingreso de " + visitanteSeleccionado.getNombre() + ".");
+    }
+
+    private void avanzarEstadoSolicitudSeleccionada() {
+        Solicitud solicitudSeleccionada = tablaSolicitudes.getSelectionModel().getSelectedItem();
+
+        if (solicitudSeleccionada == null) {
+            mostrarAlerta("Seleccioná una solicitud", "Primero seleccioná una solicitud de la tabla.");
+            return;
+        }
+
+        sistemaBarrio.avanzarEstadoSolicitud(solicitudSeleccionada);
+        tablaSolicitudes.refresh();
+
+        mostrarAlerta("Estado actualizado", "La solicitud avanzó de estado correctamente.");
+    }
+
+    private GridPane crearGridFormulario() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setPadding(new Insets(20));
+        return grid;
+    }
+
     private int obtenerNuevoIdResidente() {
         return residentes.size() + 1;
     }
@@ -320,7 +501,7 @@ public class MainApp extends Application {
     }
 
     private int obtenerNuevoIdVivienda() {
-        return barrio.listarViviendas().size() + 1;
+        return contadorViviendas++;
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -336,6 +517,8 @@ public class MainApp extends Application {
 
         Vivienda vivienda1 = new Vivienda(1, "Lote 12", "Calle Roble 120");
         Vivienda vivienda2 = new Vivienda(2, "Lote 18", "Calle Lago 85");
+
+        contadorViviendas = 3;
 
         Residente residente1 = new Residente(1, "Sofía", "Gómez", "40111222", "sofia@email.com", "1130000000");
         Residente residente2 = new Residente(2, "Martín", "Pérez", "38999888", "martin@email.com", "1140000000");

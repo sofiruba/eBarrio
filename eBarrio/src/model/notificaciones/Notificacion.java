@@ -1,4 +1,4 @@
-package notificaciones;
+package model.notificaciones;
 
 import java.time.LocalDateTime;
 

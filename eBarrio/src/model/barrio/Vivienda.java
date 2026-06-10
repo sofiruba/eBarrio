@@ -1,11 +1,7 @@
-<<<<<<< HEAD:eBarrio/src/model/barrio/Vivienda.java
-package barrio;
-=======
-package model;
->>>>>>> 6779a553611f863ff8525b03762e93965d99491b:eBarrio/src/model/Vivienda.java
-
+package model.barrio;
 import java.util.ArrayList;
 import java.util.List;
+import model.barrio.Residente;
 
 public class Vivienda {
     private int id;
@@ -27,7 +23,7 @@ public class Vivienda {
         }
     }
 
-    public List<model.Residente> obtenerResidentes() {
+    public List<Residente> obtenerResidentes() {
         return residentes;
     }
 
@@ -59,7 +55,7 @@ public class Vivienda {
         return residentes;
     }
 
-    public void setResidentes(List<model.Residente> residentes) {
+    public void setResidentes(List<Residente> residentes) {
         this.residentes = residentes;
     }
 

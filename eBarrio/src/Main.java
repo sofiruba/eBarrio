@@ -1,13 +1,14 @@
-import accesos.Acceso;
-import barrio.Barrio;
-import barrio.Residente;
-import barrio.Vivienda;
+import model.accesos.Acceso;
+import model.barrio.Barrio;
+import model.barrio.Residente;
+import model.barrio.Vivienda;
 import sistema.SistemaBarrio;
-import solicitud.personal.IncidenteSeguridad;
-import solicitud.personal.PersonalMantenimiento;
-import solicitud.personal.PersonalSeguridad;
-import solicitud.personal.TareaMantenimiento;
-import solicitud.reclamo.Reclamo;
+import model.solicitud.personal.IncidenteSeguridad;
+import model.solicitud.personal.PersonalMantenimiento;
+import model.solicitud.personal.PersonalSeguridad;
+import model.solicitud.personal.TareaMantenimiento;
+import model.solicitud.reclamo.Reclamo;
+import model.Administrador;
 
 public class Main {
 

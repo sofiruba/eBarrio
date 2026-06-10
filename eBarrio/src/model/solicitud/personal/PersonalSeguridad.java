@@ -1,6 +1,6 @@
-package solicitud.personal;
+package model.solicitud.personal;
 
-import accesos.Acceso;
+import model.accesos.Acceso;
 
 public class PersonalSeguridad {
 

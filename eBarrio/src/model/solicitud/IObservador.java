@@ -1,4 +1,4 @@
-package solicitud;
+package model.solicitud;
 
 // Interfaz del patrón Observer.
 

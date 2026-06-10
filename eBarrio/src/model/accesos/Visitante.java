@@ -1,10 +1,4 @@
-<<<<<<< HEAD:eBarrio/src/model/accesos/Visitante.java
-package accesos;
-
-=======
-package model;
->>>>>>> 6779a553611f863ff8525b03762e93965d99491b:eBarrio/src/model/Visitante.java
-
+package model.accesos;
 public class Visitante {
     private int id;
     private String nombre;

@@ -1,6 +1,6 @@
-package solicitud.estados;
+package model.solicitud.estados;
 
-import solicitud.Solicitud;
+import model.solicitud.Solicitud;
 
 public class EstadoPendiente implements IEstadoSolicitud {
 

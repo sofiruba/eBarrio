@@ -1,4 +1,4 @@
-package accesos;
+package model.accesos;
 
 import java.time.LocalDateTime;
 

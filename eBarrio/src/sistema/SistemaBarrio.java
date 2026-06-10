@@ -3,13 +3,14 @@ package sistema;
 import java.util.ArrayList;
 import java.util.List;
 
-import notificaciones.Notificacion;
-import solicitud.Solicitud;
-import solicitud.personal.TareaMantenimiento;
-import solicitud.personal.IncidenteSeguridad;
-import solicitud.IObservador;
-import solicitud.reclamo.Reclamo;
-import accesos.Acceso;
+import model.notificaciones.Notificacion;
+import model.solicitud.Solicitud;
+import model.solicitud.SolicitudFactory;
+import model.solicitud.personal.TareaMantenimiento;
+import model.solicitud.personal.IncidenteSeguridad;
+import model.solicitud.IObservador;
+import model.solicitud.reclamo.Reclamo;
+import model.accesos.Acceso;
 
 // Clase principal del sistema, que actúa como fachada para gestionar las operaciones
 
@@ -49,29 +50,59 @@ public class SistemaBarrio {
     // ── Creación de solicitudes ────────────────────────────────────────────
 
     public Reclamo crearReclamo(String nombre, String descripcion, String prioridad, String tipoReclamo) {
-        Reclamo reclamo = new Reclamo(contadorSolicitudes++, nombre, descripcion, prioridad, tipoReclamo);
+        Reclamo reclamo = (Reclamo) SolicitudFactory.crearSolicitud(
+                "RECLAMO",
+                contadorSolicitudes++,
+                nombre,
+                descripcion,
+                prioridad,
+                tipoReclamo
+        );
+
         suscribirObservadoresGlobales(reclamo);
         solicitudes.add(reclamo);
+
         System.out.println("Reclamo creado: " + reclamo);
         notificar("Se creó el reclamo [" + reclamo.getId() + "]: " + descripcion, "Sistema");
+
         return reclamo;
     }
 
     public TareaMantenimiento crearTareaMantenimiento(String nombre, String descripcion, String prioridad, String sector) {
-        TareaMantenimiento tarea = new TareaMantenimiento(contadorSolicitudes++, nombre, descripcion, prioridad, sector);
+        TareaMantenimiento tarea = (TareaMantenimiento) SolicitudFactory.crearSolicitud(
+                "TAREA_MANTENIMIENTO",
+                contadorSolicitudes++,
+                nombre,
+                descripcion,
+                prioridad,
+                sector
+        );
+
         suscribirObservadoresGlobales(tarea);
         solicitudes.add(tarea);
+
         System.out.println("Tarea de mantenimiento creada: " + tarea);
         notificar("Se creó la tarea [" + tarea.getId() + "]: " + descripcion, "Sistema");
+
         return tarea;
     }
 
     public IncidenteSeguridad crearIncidenteSeguridad(String nombre, String descripcion, String prioridad, String nivelRiesgo) {
-        IncidenteSeguridad incidente = new IncidenteSeguridad(contadorSolicitudes++, nombre, descripcion, prioridad, nivelRiesgo);
+        IncidenteSeguridad incidente = (IncidenteSeguridad) SolicitudFactory.crearSolicitud(
+                "INCIDENTE_SEGURIDAD",
+                contadorSolicitudes++,
+                nombre,
+                descripcion,
+                prioridad,
+                nivelRiesgo
+        );
+
         suscribirObservadoresGlobales(incidente);
         solicitudes.add(incidente);
+
         System.out.println("Incidente de seguridad creado: " + incidente);
         notificar("Se creó el incidente [" + incidente.getId() + "]: " + descripcion, "Sistema");
+
         return incidente;
     }
 

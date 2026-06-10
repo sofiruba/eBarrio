@@ -1,8 +1,8 @@
-package solicitud.personal;
+package model.solicitud.personal;
 
 // Incidente de seguridad registrado en el barrio.
 
-import solicitud.Solicitud;
+import model.solicitud.Solicitud;
 
 public class IncidenteSeguridad extends Solicitud {
 

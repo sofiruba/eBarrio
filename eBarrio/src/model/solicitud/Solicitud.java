@@ -1,7 +1,7 @@
-package solicitud;
+package model.solicitud;
 
-import solicitud.estados.EstadoPendiente;
-import solicitud.estados.IEstadoSolicitud;
+import model.solicitud.estados.EstadoPendiente;
+import model.solicitud.estados.IEstadoSolicitud;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

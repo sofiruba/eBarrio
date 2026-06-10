@@ -1,7 +1,7 @@
-package solicitud.test;
+package model.solicitud.test;
 
-import solicitud.reclamo.Reclamo;
-import solicitud.Solicitud;
+import model.solicitud.reclamo.Reclamo;
+import model.solicitud.Solicitud;
 
 public class TestReclamo {
     public static void main(String[] args) {

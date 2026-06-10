@@ -1,5 +1,7 @@
-import solicitud.IObservador;
-import solicitud.Solicitud;
+package model;
+
+import model.solicitud.IObservador;
+import model.solicitud.Solicitud;
 
 // Administrador del barrio.
 

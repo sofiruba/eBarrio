@@ -1,13 +1,9 @@
-<<<<<<< HEAD:eBarrio/src/model/barrio/Residente.java
-package barrio;
-=======
-package model;
->>>>>>> 6779a553611f863ff8525b03762e93965d99491b:eBarrio/src/model/Residente.java
-
+package model.barrio;
 import java.util.ArrayList;
 import java.util.List;
 
-import accesos.Visitante;
+import model.accesos.*;
+import model.barrio.*;
 
 public class Residente {
     private int id;

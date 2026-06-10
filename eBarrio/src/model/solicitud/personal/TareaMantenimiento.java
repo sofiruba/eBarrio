@@ -1,7 +1,7 @@
-package solicitud.personal;
+package model.solicitud.personal;
 // Tarea de mantenimiento dentro del barrio.
 
-import solicitud.Solicitud;
+import model.solicitud.Solicitud;
 
 public class TareaMantenimiento extends Solicitud {
 
