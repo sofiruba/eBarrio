@@ -6,35 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/MainApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Administrador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Administrador.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/accesos/Acceso.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/accesos/Acceso.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/accesos/Visitante.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/accesos/Visitante.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Barrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Barrio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Residente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Residente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Vivienda.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Vivienda.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/notificaciones/Notificacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/notificaciones/Notificacion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/IObservador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/IObservador.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/Solicitud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/Solicitud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoAsignado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoAsignado.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoCerrado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoCerrado.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoEnProceso.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoEnProceso.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoPendiente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoPendiente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoResuelto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoResuelto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/IEstadoSolicitud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/IEstadoSolicitud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/IncidenteSeguridad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/IncidenteSeguridad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalMantenimiento.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalMantenimiento.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalSeguridad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalSeguridad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/TareaMantenimiento.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/TareaMantenimiento.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/reclamo/Reclamo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/reclamo/Reclamo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/test/TestReclamo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/test/TestReclamo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -107,38 +91,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.eBarrio.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.eBarrio.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/libs" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.eBarrio">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="eBarrio" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="eBarrio" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="app.MainApp" />
       <module name="eBarrio" />
@@ -147,6 +139,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.eBarrio" />
+      <item itemvalue="Application.Main" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -176,11 +177,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>73</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/app/MainApp.java</url>
           <line>26</line>
