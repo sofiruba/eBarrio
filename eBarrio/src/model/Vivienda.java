@@ -1,4 +1,4 @@
-package com.ebarrio.model;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class Vivienda {
         }
     }
 
-    public List<Residente> obtenerResidentes() {
+    public List<model.Residente> obtenerResidentes() {
         return residentes;
     }
 
@@ -55,7 +55,7 @@ public class Vivienda {
         return residentes;
     }
 
-    public void setResidentes(List<Residente> residentes) {
+    public void setResidentes(List<model.Residente> residentes) {
         this.residentes = residentes;
     }
 

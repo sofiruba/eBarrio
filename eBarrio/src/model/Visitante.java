@@ -1,4 +1,4 @@
-package com.ebarrio.model;
+package model;
 
 public class Visitante {
     private int id;

@@ -1,9 +1,9 @@
-package com.ebarrio.app;
+package app;
 
-import com.ebarrio.model.Barrio;
-import com.ebarrio.model.Residente;
-import com.ebarrio.model.Visitante;
-import com.ebarrio.model.Vivienda;
+import model.Barrio;
+import model.Residente;
+import model.Visitante;
+import model.Vivienda;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,10 +15,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.util.Optional;
+
 public class MainApp extends Application {
 
     private ObservableList<Residente> residentes = FXCollections.observableArrayList();
     private ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
+
+    private TableView<Residente> tablaResidentes;
+    private TableView<Visitante> tablaVisitantes;
+
+    private Barrio barrio;
 
     @Override
     public void start(Stage stage) {
@@ -34,7 +41,7 @@ public class MainApp extends Application {
         root.setCenter(contenido);
 
         Scene scene = new Scene(root, 1000, 620);
-        scene.getStylesheets().add(getClass().getResource("/com/ebarrio/styles/styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
 
         stage.setTitle("eBarrio - Gestión de Barrio Cerrado");
         stage.setScene(scene);
@@ -58,10 +65,17 @@ public class MainApp extends Application {
         btnReclamos.getStyleClass().add("menu-button");
         btnAccesos.getStyleClass().add("menu-button");
 
+        btnReclamos.setOnAction(e -> mostrarAlerta("Módulo en desarrollo",
+                "El módulo de reclamos será integrado con las clases del otro integrante."));
+
+        btnAccesos.setOnAction(e -> mostrarAlerta("Módulo en desarrollo",
+                "El módulo de accesos será integrado en la siguiente etapa."));
+
         VBox sidebar = new VBox(15, logo, subtitulo, btnResidentes, btnVisitantes, btnReclamos, btnAccesos);
         sidebar.setPadding(new Insets(30));
         sidebar.setPrefWidth(250);
         sidebar.getStyleClass().add("sidebar");
+
         return sidebar;
     }
 
@@ -69,16 +83,20 @@ public class MainApp extends Application {
         Label titulo = new Label("Panel inicial");
         titulo.getStyleClass().add("title");
 
-        Label descripcion = new Label("Primer avance visual del sistema eBarrio. Módulo de residentes, viviendas y visitantes.");
+        Label descripcion = new Label("Primer avance funcional del sistema eBarrio. Módulo de residentes, viviendas y visitantes.");
         descripcion.getStyleClass().add("description");
 
-        TableView<Residente> tablaResidentes = crearTablaResidentes();
-        TableView<Visitante> tablaVisitantes = crearTablaVisitantes();
+        tablaResidentes = crearTablaResidentes();
+        tablaVisitantes = crearTablaVisitantes();
 
         Button agregarResidente = new Button("Agregar residente");
         Button registrarVisitante = new Button("Registrar visitante");
+
         agregarResidente.getStyleClass().add("primary-button");
         registrarVisitante.getStyleClass().add("secondary-button");
+
+        agregarResidente.setOnAction(e -> mostrarFormularioAgregarResidente());
+        registrarVisitante.setOnAction(e -> mostrarFormularioRegistrarVisitante());
 
         HBox botones = new HBox(12, agregarResidente, registrarVisitante);
         botones.setAlignment(Pos.CENTER_LEFT);
@@ -95,6 +113,7 @@ public class MainApp extends Application {
 
         VBox contenido = new VBox(18, titulo, descripcion, botones, tablas);
         contenido.setPadding(new Insets(35));
+
         return contenido;
     }
 
@@ -116,6 +135,7 @@ public class MainApp extends Application {
 
         tabla.getColumns().addAll(colId, colNombre, colApellido, colDni);
         tabla.setPrefHeight(300);
+
         return tabla;
     }
 
@@ -137,11 +157,183 @@ public class MainApp extends Application {
 
         tabla.getColumns().addAll(colId, colNombre, colDni, colMotivo);
         tabla.setPrefHeight(300);
+
         return tabla;
     }
 
+    private void mostrarFormularioAgregarResidente() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Agregar residente");
+        dialog.setHeaderText("Cargar nuevo residente");
+
+        TextField campoNombre = new TextField();
+        campoNombre.setPromptText("Nombre");
+
+        TextField campoApellido = new TextField();
+        campoApellido.setPromptText("Apellido");
+
+        TextField campoDni = new TextField();
+        campoDni.setPromptText("DNI");
+
+        TextField campoEmail = new TextField();
+        campoEmail.setPromptText("Email");
+
+        TextField campoTelefono = new TextField();
+        campoTelefono.setPromptText("Teléfono");
+
+        TextField campoLote = new TextField();
+        campoLote.setPromptText("Lote / Vivienda");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setPadding(new Insets(20));
+
+        grid.add(new Label("Nombre:"), 0, 0);
+        grid.add(campoNombre, 1, 0);
+
+        grid.add(new Label("Apellido:"), 0, 1);
+        grid.add(campoApellido, 1, 1);
+
+        grid.add(new Label("DNI:"), 0, 2);
+        grid.add(campoDni, 1, 2);
+
+        grid.add(new Label("Email:"), 0, 3);
+        grid.add(campoEmail, 1, 3);
+
+        grid.add(new Label("Teléfono:"), 0, 4);
+        grid.add(campoTelefono, 1, 4);
+
+        grid.add(new Label("Lote:"), 0, 5);
+        grid.add(campoLote, 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (campoNombre.getText().isBlank() || campoApellido.getText().isBlank() || campoDni.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "Nombre, apellido y DNI son obligatorios.");
+                return;
+            }
+
+            Residente nuevoResidente = new Residente(
+                    obtenerNuevoIdResidente(),
+                    campoNombre.getText(),
+                    campoApellido.getText(),
+                    campoDni.getText(),
+                    campoEmail.getText(),
+                    campoTelefono.getText()
+            );
+
+            Vivienda nuevaVivienda = new Vivienda(
+                    obtenerNuevoIdVivienda(),
+                    campoLote.getText().isBlank() ? "Sin lote" : campoLote.getText(),
+                    "Sin dirección cargada"
+            );
+
+            nuevaVivienda.agregarResidente(nuevoResidente);
+            barrio.agregarVivienda(nuevaVivienda);
+
+            residentes.add(nuevoResidente);
+            tablaResidentes.refresh();
+
+            mostrarAlerta("Residente agregado", "El residente fue cargado correctamente en memoria.");
+        }
+    }
+
+    private void mostrarFormularioRegistrarVisitante() {
+        Residente residenteSeleccionado = tablaResidentes.getSelectionModel().getSelectedItem();
+
+        if (residenteSeleccionado == null) {
+            mostrarAlerta("Seleccioná un residente", "Primero seleccioná un residente de la tabla para asociarle el visitante.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Registrar visitante");
+        dialog.setHeaderText("Registrar visitante para: " + residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido());
+
+        TextField campoNombre = new TextField();
+        campoNombre.setPromptText("Nombre del visitante");
+
+        TextField campoDni = new TextField();
+        campoDni.setPromptText("DNI");
+
+        TextField campoPatente = new TextField();
+        campoPatente.setPromptText("Patente");
+
+        TextField campoMotivo = new TextField();
+        campoMotivo.setPromptText("Motivo de visita");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(12);
+        grid.setPadding(new Insets(20));
+
+        grid.add(new Label("Nombre:"), 0, 0);
+        grid.add(campoNombre, 1, 0);
+
+        grid.add(new Label("DNI:"), 0, 1);
+        grid.add(campoDni, 1, 1);
+
+        grid.add(new Label("Patente:"), 0, 2);
+        grid.add(campoPatente, 1, 2);
+
+        grid.add(new Label("Motivo:"), 0, 3);
+        grid.add(campoMotivo, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (campoNombre.getText().isBlank() || campoDni.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "Nombre y DNI del visitante son obligatorios.");
+                return;
+            }
+
+            Visitante nuevoVisitante = new Visitante(
+                    obtenerNuevoIdVisitante(),
+                    campoNombre.getText(),
+                    campoDni.getText(),
+                    campoPatente.getText(),
+                    campoMotivo.getText()
+            );
+
+            residenteSeleccionado.registrarVisitante(nuevoVisitante);
+            visitantes.add(nuevoVisitante);
+            tablaVisitantes.refresh();
+
+            mostrarAlerta("Visitante registrado", "El visitante fue asociado al residente seleccionado.");
+        }
+    }
+
+    private int obtenerNuevoIdResidente() {
+        return residentes.size() + 1;
+    }
+
+    private int obtenerNuevoIdVisitante() {
+        return visitantes.size() + 1;
+    }
+
+    private int obtenerNuevoIdVivienda() {
+        return barrio.listarViviendas().size() + 1;
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
     private void cargarDatosDePrueba() {
-        Barrio barrio = new Barrio(1, "eBarrio Norte", "Av. Central 1000");
+        barrio = new Barrio(1, "eBarrio Norte", "Av. Central 1000");
+
         Vivienda vivienda1 = new Vivienda(1, "Lote 12", "Calle Roble 120");
         Vivienda vivienda2 = new Vivienda(2, "Lote 18", "Calle Lago 85");
 
@@ -153,6 +345,7 @@ public class MainApp extends Application {
 
         vivienda1.agregarResidente(residente1);
         vivienda2.agregarResidente(residente2);
+
         barrio.agregarVivienda(vivienda1);
         barrio.agregarVivienda(vivienda2);
 
