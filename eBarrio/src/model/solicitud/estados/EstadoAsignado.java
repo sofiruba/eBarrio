@@ -1,19 +1,19 @@
-package reclamos.estados;
+package solicitud.estados;
 
-import reclamos.reclamo.Reclamo;
+import solicitud.Solicitud;
 
-public class EstadoAsignado implements IEstadoReclamo{
+public class EstadoAsignado implements IEstadoSolicitud {
 
     @Override
-    public void avanzar(Reclamo reclamo) {
+    public void avanzar(Solicitud solicitud) {
         System.out.println("El reclamo pasa de 'Asignado' a 'En proceso'.");
-        reclamo.setEstado(new EstadoEnProceso());
+        solicitud.setEstado(new EstadoEnProceso());
     }
 
     @Override
-    public void cancelar(Reclamo reclamo) {
+    public void cancelar(Solicitud solicitud) {
         System.out.println("El reclamo que se encontraba ya asignado ha sido directamente cerrado.");
-        reclamo.setEstado(new EstadoCerrado());
+        solicitud.setEstado(new EstadoCerrado());
     }
 
     @Override

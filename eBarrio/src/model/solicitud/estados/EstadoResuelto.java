@@ -1,17 +1,17 @@
-package reclamos.estados;
+package solicitud.estados;
 
-import reclamos.reclamo.Reclamo;
+import solicitud.Solicitud;
 
-public class EstadoResuelto implements IEstadoReclamo{
+public class EstadoResuelto implements IEstadoSolicitud {
 
     @Override
-    public void avanzar(Reclamo reclamo) {
+    public void avanzar(Solicitud solicitud) {
         System.out.println("El reclamo pasa de 'Resuelto' a 'Cerrado'.");
-        reclamo.setEstado(new EstadoCerrado());
+        solicitud.setEstado(new EstadoCerrado());
     }
 
     @Override
-    public void cancelar(Reclamo reclamo) {
+    public void cancelar(Solicitud solicitud) {
         System.out.println("Error: no se puede cancelar un reclamo que ya ha sido marcado como resuelto.");
     }
 

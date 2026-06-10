@@ -1,15 +1,14 @@
-package reclamos.test;
+package solicitud.test;
 
-import reclamos.reclamo.Reclamo;
+import solicitud.reclamo.Reclamo;
+import solicitud.Solicitud;
 
 public class TestReclamo {
     public static void main(String[] args) {
 
-        Reclamo r1 = new Reclamo("R01",
-                "Iluminacion faltante en sector G",
-                "La luminaria del sector G presenta deterioros considerables y requiere su arreglo."
-        );
-
+        Solicitud r1 = new Reclamo(1, "R01", 
+        "Iluminacion faltante en sector G", 
+        "Alta", "Iluminacion");
 
         System.out.println("Nombre del reclamo recien generado: " + r1.getNombre());
         System.out.println("ID: " + r1.getId());
@@ -53,10 +52,11 @@ public class TestReclamo {
 
 
         System.out.println("Creamos otro reclamo:");
-        Reclamo r2 = new Reclamo("R02",
-                "Bache en sector paredon",
-                "Se presenta un bache de gran magnitud en la calle del paredon. Se requiere su arreglo."
-        );
+
+        Solicitud r2 = new Reclamo(2, "R02", 
+        "Reclamo de falta de agua en sector B", 
+        "Alta", "Agua" );
+        
 
         System.out.println("Nombre del reclamo recien generado: " + r2.getNombre());
         System.out.println("ID: " + r2.getId());

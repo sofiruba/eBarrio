@@ -1,7 +1,9 @@
-package com.ebarrio.model;
+package barrio;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import accesos.Visitante;
 
 public class Residente {
     private int id;

@@ -1,4 +1,4 @@
-package com.ebarrio.model;
+package barrio;
 
 import java.util.ArrayList;
 import java.util.List;
