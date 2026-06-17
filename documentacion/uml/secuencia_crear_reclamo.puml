@@ -1,0 +1,21 @@
+@startuml
+actor Administrador
+participant SistemaBarrio
+participant SolicitudFactory
+participant Reclamo
+participant Administrador as Observador
+participant Notificacion
+
+Administrador -> SistemaBarrio: crearReclamo(nombre, descripcion, prioridad, tipo)
+SistemaBarrio -> SolicitudFactory: crearSolicitud("RECLAMO", ...)
+SolicitudFactory --> SistemaBarrio: Reclamo
+SistemaBarrio -> Reclamo: agregarObservador(observador)
+SistemaBarrio -> Notificacion: new(mensaje, "Sistema")
+SistemaBarrio -> Notificacion: enviar()
+SistemaBarrio --> Administrador: Reclamo creado
+
+Administrador -> SistemaBarrio: avanzarEstadoSolicitud(reclamo)
+SistemaBarrio -> Reclamo: avanzar()
+Reclamo -> Reclamo: cambiar estado
+Reclamo -> Observador: actualizar(reclamo)
+@enduml

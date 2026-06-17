@@ -1,0 +1,169 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "model.barrio" {
+  class Barrio {
+    - id: int
+    - nombre: String
+    - direccion: String
+    - viviendas: List<Vivienda>
+    + agregarVivienda(vivienda: Vivienda): void
+    + listarViviendas(): List<Vivienda>
+  }
+
+  class Vivienda {
+    - id: int
+    - lote: String
+    - direccion: String
+    - residentes: List<Residente>
+    + agregarResidente(residente: Residente): void
+    + obtenerResidentes(): List<Residente>
+  }
+
+  class Residente {
+    - id: int
+    - nombre: String
+    - apellido: String
+    - dni: String
+    - email: String
+    - telefono: String
+    - visitantes: List<Visitante>
+    + registrarVisitante(visitante: Visitante): void
+  }
+}
+
+package "model.accesos" {
+  class Visitante {
+    - id: int
+    - nombre: String
+    - dni: String
+    - patente: String
+    - motivoVisita: String
+  }
+
+  class Acceso {
+    - id: int
+    - nombreVisitante: String
+    - dniVisitante: String
+    - fechaIngreso: LocalDateTime
+    - fechaEgreso: LocalDateTime
+    + registrarIngreso(): void
+    + registrarEgreso(): void
+    + estaActivo(): boolean
+  }
+}
+
+package "model.solicitud" {
+  abstract class Solicitud {
+    - id: int
+    - nombre: String
+    - descripcion: String
+    - prioridad: String
+    - fechaCreacion: LocalDate
+    - estado: IEstadoSolicitud
+    - observadores: List<IObservador>
+    + avanzar(): void
+    + cancelar(): void
+    + agregarObservador(observador: IObservador): void
+    + notificarObservadores(): void
+  }
+
+  interface IObservador {
+    + actualizar(solicitud: Solicitud): void
+  }
+
+  class SolicitudFactory {
+    + crearSolicitud(tipo: String, id: int, nombre: String, descripcion: String, prioridad: String, datoExtra: String): Solicitud
+  }
+}
+
+package "model.solicitud.estados" {
+  interface IEstadoSolicitud {
+    + avanzar(solicitud: Solicitud): void
+    + cancelar(solicitud: Solicitud): void
+    + mostrarNombreEstado(): String
+  }
+
+  class EstadoPendiente
+  class EstadoAsignado
+  class EstadoEnProceso
+  class EstadoResuelto
+  class EstadoCerrado
+}
+
+package "model.solicitud.reclamo" {
+  class Reclamo {
+    - tipoReclamo: String
+  }
+}
+
+package "model.solicitud.personal" {
+  class TareaMantenimiento {
+    - sector: String
+  }
+
+  class IncidenteSeguridad {
+    - nivelRiesgo: String
+  }
+
+  class PersonalMantenimiento
+  class PersonalSeguridad
+}
+
+package "model" {
+  class Administrador {
+    - id: int
+    - nombre: String
+    - email: String
+    + actualizar(solicitud: Solicitud): void
+  }
+}
+
+package "model.notificaciones" {
+  class Notificacion {
+    - id: int
+    - mensaje: String
+    - fecha: LocalDateTime
+    - destinatario: String
+    + enviar(): void
+  }
+}
+
+package "sistema" {
+  class SistemaBarrio {
+    - solicitudes: List<Solicitud>
+    - accesos: List<Acceso>
+    - notificaciones: List<Notificacion>
+    + crearReclamo(...): Reclamo
+    + crearTareaMantenimiento(...): TareaMantenimiento
+    + crearIncidenteSeguridad(...): IncidenteSeguridad
+    + registrarAcceso(...): Acceso
+    + registrarEgresoAcceso(acceso: Acceso): void
+    + avanzarEstadoSolicitud(solicitud: Solicitud): void
+  }
+}
+
+Barrio "1" o-- "*" Vivienda
+Vivienda "1" o-- "*" Residente
+Residente "1" o-- "*" Visitante
+
+Solicitud <|-- Reclamo
+Solicitud <|-- TareaMantenimiento
+Solicitud <|-- IncidenteSeguridad
+
+Solicitud --> IEstadoSolicitud
+IEstadoSolicitud <|.. EstadoPendiente
+IEstadoSolicitud <|.. EstadoAsignado
+IEstadoSolicitud <|.. EstadoEnProceso
+IEstadoSolicitud <|.. EstadoResuelto
+IEstadoSolicitud <|.. EstadoCerrado
+
+Solicitud --> IObservador
+Administrador ..|> IObservador
+
+SolicitudFactory ..> Solicitud
+SistemaBarrio ..> SolicitudFactory
+SistemaBarrio o-- "*" Solicitud
+SistemaBarrio o-- "*" Acceso
+SistemaBarrio o-- "*" Notificacion
+@enduml

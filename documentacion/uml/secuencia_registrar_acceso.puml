@@ -1,0 +1,18 @@
+@startuml
+actor "Personal de seguridad" as Seguridad
+participant SistemaBarrio
+participant Acceso
+participant Notificacion
+
+Seguridad -> SistemaBarrio: registrarAcceso(nombreVisitante, dniVisitante)
+SistemaBarrio -> Acceso: new(id, nombreVisitante, dniVisitante)
+SistemaBarrio -> Acceso: registrarIngreso()
+SistemaBarrio -> Notificacion: new("Ingreso registrado", "Seguridad")
+SistemaBarrio -> Notificacion: enviar()
+SistemaBarrio --> Seguridad: acceso registrado
+
+Seguridad -> SistemaBarrio: registrarEgresoAcceso(acceso)
+SistemaBarrio -> Acceso: registrarEgreso()
+SistemaBarrio -> Notificacion: new("Egreso registrado", "Seguridad")
+SistemaBarrio -> Notificacion: enviar()
+@enduml

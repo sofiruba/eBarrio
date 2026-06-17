@@ -5,31 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/eBarrio.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/eBarrio.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/MainApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Administrador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Administrador.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/accesos/Acceso.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/accesos/Acceso.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/accesos/Visitante.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/accesos/Visitante.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Barrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Barrio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Residente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Residente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/barrio/Vivienda.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/barrio/Vivienda.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/notificaciones/Notificacion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/notificaciones/Notificacion.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/IObservador.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/IObservador.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/Solicitud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/Solicitud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoAsignado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoAsignado.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoCerrado.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoCerrado.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoEnProceso.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoEnProceso.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoPendiente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoPendiente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoResuelto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/EstadoResuelto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/estados/IEstadoSolicitud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/estados/IEstadoSolicitud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/IncidenteSeguridad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/IncidenteSeguridad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalMantenimiento.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalMantenimiento.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalSeguridad.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/PersonalSeguridad.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/personal/TareaMantenimiento.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/personal/TareaMantenimiento.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/reclamo/Reclamo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/reclamo/Reclamo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/solicitud/test/TestReclamo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/solicitud/test/TestReclamo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoAsignado.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoCerrado.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoEnProceso.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoPendiente.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoResuelto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/IEstadoReclamo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/reclamo/Reclamo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/test/TestReclamo.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +27,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;nachodcortes&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/sofiruba/eBarrio.git&quot;,
+    &quot;accountId&quot;: &quot;fe3c8cb7-dcb6-49c7-a6aa-c74ea1b9f8af&quot;
+  }
+}</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
@@ -107,32 +107,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.eBarrio.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.eBarrio.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/nacho_ny4lh0o/Documents/Facultad/3° Año-1° Cuatri/Proceso de desarrollo de software/eBarrio/eBarrio",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/libs" />
@@ -151,8 +152,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
-        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
       </set>
     </attachedChunks>
   </component>

@@ -1,0 +1,76 @@
+.root-layout {
+    -fx-background-color: #F7F5EF;
+    -fx-font-family: "Arial";
+}
+
+.sidebar {
+    -fx-background-color: #0F3D2E;
+}
+
+.logo {
+    -fx-text-fill: #F7F5EF;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-text-fill: #D8C98A;
+    -fx-font-size: 13px;
+    -fx-padding: 0 0 20 0;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #F7F5EF;
+    -fx-font-size: 15px;
+    -fx-alignment: center-left;
+    -fx-pref-width: 190px;
+    -fx-padding: 12 16;
+    -fx-border-color: #2F6B52;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.menu-button:hover {
+    -fx-background-color: #19563F;
+}
+
+.title {
+    -fx-text-fill: #0F3D2E;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.description {
+    -fx-text-fill: #4C5B52;
+    -fx-font-size: 14px;
+}
+
+.primary-button {
+    -fx-background-color: #0F3D2E;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 18;
+}
+
+.secondary-button {
+    -fx-background-color: #D8C98A;
+    -fx-text-fill: #0F3D2E;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 18;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
+}
+
+.table-view {
+    -fx-background-radius: 8;
+    -fx-border-color: #E4E0D5;
+    -fx-border-radius: 8;
+}

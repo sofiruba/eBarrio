@@ -1,0 +1,14 @@
+@startuml
+actor Administrador
+participant SistemaBarrio
+participant Solicitud
+participant IEstadoSolicitud
+participant IObservador
+
+Administrador -> SistemaBarrio: avanzarEstadoSolicitud(solicitud)
+SistemaBarrio -> Solicitud: avanzar()
+Solicitud -> IEstadoSolicitud: avanzar(solicitud)
+IEstadoSolicitud -> Solicitud: setEstado(nuevoEstado)
+Solicitud -> IObservador: actualizar(solicitud)
+SistemaBarrio --> Administrador: estado actualizado
+@enduml

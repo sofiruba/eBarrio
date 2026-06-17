@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+
+actor Administrador
+actor Residente
+actor "Personal de seguridad" as Seguridad
+actor "Personal de mantenimiento" as Mantenimiento
+
+rectangle "eBarrio" {
+  usecase "Registrar residente" as UC1
+  usecase "Registrar visitante" as UC2
+  usecase "Registrar proveedor" as UCProveedor
+  usecase "Registrar ingreso" as UC3
+  usecase "Registrar egreso" as UC4
+  usecase "Crear reclamo" as UC5
+  usecase "Crear tarea de mantenimiento" as UC6
+  usecase "Reportar incidente" as UC7
+  usecase "Avanzar estado de solicitud" as UC8
+  usecase "Consultar solicitudes" as UC9
+}
+
+Administrador --> UC1
+Administrador --> UC6
+Administrador --> UC8
+Administrador --> UC9
+Residente --> UC2
+Residente --> UC5
+Seguridad --> UC3
+Seguridad --> UC4
+Seguridad --> UC7
+Seguridad --> UCProveedor
+Mantenimiento --> UC8
+@enduml
