@@ -12,19 +12,24 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import model.accesos.Acceso;
+import model.accesos.Visitante;
+
 import model.barrio.Barrio;
 import model.barrio.Residente;
 import model.barrio.Vivienda;
-import model.accesos.Visitante;
-import model.accesos.Acceso;
+
 import model.solicitud.Solicitud;
 import model.solicitud.reclamo.Reclamo;
+
 import sistema.SistemaBarrio;
 
 import java.net.URL;
 import java.util.Optional;
 
 public class MainApp extends Application {
+
+    private SistemaBarrio sistemaBarrio = new SistemaBarrio();
 
     private ObservableList<Residente> residentes = FXCollections.observableArrayList();
     private ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
@@ -36,10 +41,7 @@ public class MainApp extends Application {
     private TableView<Solicitud> tablaSolicitudes;
     private TableView<Acceso> tablaAccesos;
 
-    private Barrio barrio;
-    private SistemaBarrio sistemaBarrio = new SistemaBarrio();
-
-    private int contadorViviendas = 1;
+    private Barrio barrioPrincipal;
 
     @Override
     public void start(Stage stage) {
@@ -91,8 +93,13 @@ public class MainApp extends Application {
         btnAccesos.getStyleClass().add("menu-button");
         btnAvanzarEstado.getStyleClass().add("menu-button");
 
-        btnResidentes.setOnAction(e -> mostrarAlerta("Residentes", "El módulo de residentes se muestra en la tabla principal."));
-        btnVisitantes.setOnAction(e -> mostrarAlerta("Visitantes", "El módulo de visitantes se muestra en la tabla principal."));
+        btnResidentes.setOnAction(e ->
+                mostrarAlerta("Residentes", "El módulo de residentes se visualiza en la tabla principal.")
+        );
+
+        btnVisitantes.setOnAction(e ->
+                mostrarAlerta("Visitantes", "El módulo de visitantes se visualiza en la tabla principal.")
+        );
 
         btnReclamos.setOnAction(e -> mostrarFormularioCrearReclamo());
         btnAccesos.setOnAction(e -> registrarAccesoVisitanteSeleccionado());
@@ -296,31 +303,29 @@ public class MainApp extends Application {
         Optional<ButtonType> resultado = dialog.showAndWait();
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            if (campoNombre.getText().isBlank() || campoApellido.getText().isBlank() || campoDni.getText().isBlank()) {
+            if (campoNombre.getText().isBlank()
+                    || campoApellido.getText().isBlank()
+                    || campoDni.getText().isBlank()) {
                 mostrarAlerta("Datos incompletos", "Nombre, apellido y DNI son obligatorios.");
                 return;
             }
 
-            Residente nuevoResidente = new Residente(
-                    obtenerNuevoIdResidente(),
-                    campoNombre.getText(),
-                    campoApellido.getText(),
-                    campoDni.getText(),
-                    campoEmail.getText(),
-                    campoTelefono.getText()
-            );
-
-            Vivienda nuevaVivienda = new Vivienda(
-                    obtenerNuevoIdVivienda(),
+            Vivienda vivienda = sistemaBarrio.registrarVivienda(
+                    barrioPrincipal,
                     campoLote.getText().isBlank() ? "Sin lote" : campoLote.getText(),
                     "Sin dirección cargada"
             );
 
-            nuevaVivienda.agregarResidente(nuevoResidente);
-            barrio.agregarVivienda(nuevaVivienda);
+            sistemaBarrio.registrarResidente(
+                    campoNombre.getText(),
+                    campoApellido.getText(),
+                    campoDni.getText(),
+                    campoEmail.getText(),
+                    campoTelefono.getText(),
+                    vivienda
+            );
 
-            residentes.add(nuevoResidente);
-            tablaResidentes.refresh();
+            actualizarTablasDesdeSistema();
 
             mostrarAlerta("Residente agregado", "El residente fue cargado correctamente en memoria.");
         }
@@ -336,7 +341,10 @@ public class MainApp extends Application {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Registrar visitante");
-        dialog.setHeaderText("Registrar visitante para: " + residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido());
+        dialog.setHeaderText("Registrar visitante para: "
+                + residenteSeleccionado.getNombre()
+                + " "
+                + residenteSeleccionado.getApellido());
 
         TextField campoNombre = new TextField();
         campoNombre.setPromptText("Nombre del visitante");
@@ -375,17 +383,15 @@ public class MainApp extends Application {
                 return;
             }
 
-            Visitante nuevoVisitante = new Visitante(
-                    obtenerNuevoIdVisitante(),
+            sistemaBarrio.registrarVisitante(
+                    residenteSeleccionado,
                     campoNombre.getText(),
                     campoDni.getText(),
                     campoPatente.getText(),
                     campoMotivo.getText()
             );
 
-            residenteSeleccionado.registrarVisitante(nuevoVisitante);
-            visitantes.add(nuevoVisitante);
-            tablaVisitantes.refresh();
+            actualizarTablasDesdeSistema();
 
             mostrarAlerta("Visitante registrado", "El visitante fue asociado al residente seleccionado.");
         }
@@ -401,7 +407,10 @@ public class MainApp extends Application {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Nuevo reclamo");
-        dialog.setHeaderText("Crear reclamo para: " + residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido());
+        dialog.setHeaderText("Crear reclamo para: "
+                + residenteSeleccionado.getNombre()
+                + " "
+                + residenteSeleccionado.getApellido());
 
         TextField campoDescripcion = new TextField();
         campoDescripcion.setPromptText("Descripción del reclamo");
@@ -437,15 +446,14 @@ public class MainApp extends Application {
 
             String nombreResidente = residenteSeleccionado.getNombre() + " " + residenteSeleccionado.getApellido();
 
-            Reclamo reclamo = sistemaBarrio.crearReclamo(
+            sistemaBarrio.crearReclamo(
                     nombreResidente,
                     campoDescripcion.getText(),
                     comboPrioridad.getValue(),
                     campoTipo.getText().isBlank() ? "General" : campoTipo.getText()
             );
 
-            solicitudes.add(reclamo);
-            tablaSolicitudes.refresh();
+            actualizarTablasDesdeSistema();
 
             mostrarAlerta("Reclamo creado", "El reclamo fue creado correctamente en memoria.");
         }
@@ -459,15 +467,16 @@ public class MainApp extends Application {
             return;
         }
 
-        Acceso acceso = sistemaBarrio.registrarAcceso(
+        sistemaBarrio.registrarAcceso(
                 visitanteSeleccionado.getNombre(),
                 visitanteSeleccionado.getDni()
         );
 
-        accesos.add(acceso);
-        tablaAccesos.refresh();
+        actualizarTablasDesdeSistema();
 
-        mostrarAlerta("Acceso registrado", "Se registró el ingreso de " + visitanteSeleccionado.getNombre() + ".");
+        mostrarAlerta("Acceso registrado", "Se registró el ingreso de "
+                + visitanteSeleccionado.getNombre()
+                + ".");
     }
 
     private void avanzarEstadoSolicitudSeleccionada() {
@@ -479,9 +488,22 @@ public class MainApp extends Application {
         }
 
         sistemaBarrio.avanzarEstadoSolicitud(solicitudSeleccionada);
-        tablaSolicitudes.refresh();
+
+        actualizarTablasDesdeSistema();
 
         mostrarAlerta("Estado actualizado", "La solicitud avanzó de estado correctamente.");
+    }
+
+    private void actualizarTablasDesdeSistema() {
+        residentes.setAll(sistemaBarrio.getResidentes());
+        visitantes.setAll(sistemaBarrio.getVisitantes());
+        solicitudes.setAll(sistemaBarrio.getSolicitudes());
+        accesos.setAll(sistemaBarrio.getAccesos());
+
+        if (tablaResidentes != null) tablaResidentes.refresh();
+        if (tablaVisitantes != null) tablaVisitantes.refresh();
+        if (tablaSolicitudes != null) tablaSolicitudes.refresh();
+        if (tablaAccesos != null) tablaAccesos.refresh();
     }
 
     private GridPane crearGridFormulario() {
@@ -490,18 +512,6 @@ public class MainApp extends Application {
         grid.setVgap(12);
         grid.setPadding(new Insets(20));
         return grid;
-    }
-
-    private int obtenerNuevoIdResidente() {
-        return residentes.size() + 1;
-    }
-
-    private int obtenerNuevoIdVisitante() {
-        return visitantes.size() + 1;
-    }
-
-    private int obtenerNuevoIdVivienda() {
-        return contadorViviendas++;
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
@@ -513,30 +523,55 @@ public class MainApp extends Application {
     }
 
     private void cargarDatosDePrueba() {
-        barrio = new Barrio(1, "eBarrio Norte", "Av. Central 1000");
+        barrioPrincipal = sistemaBarrio.registrarBarrio("eBarrio Norte", "Av. Central 1000");
 
-        Vivienda vivienda1 = new Vivienda(1, "Lote 12", "Calle Roble 120");
-        Vivienda vivienda2 = new Vivienda(2, "Lote 18", "Calle Lago 85");
+        Vivienda vivienda1 = sistemaBarrio.registrarVivienda(
+                barrioPrincipal,
+                "Lote 12",
+                "Calle Roble 120"
+        );
 
-        contadorViviendas = 3;
+        Vivienda vivienda2 = sistemaBarrio.registrarVivienda(
+                barrioPrincipal,
+                "Lote 18",
+                "Calle Lago 85"
+        );
 
-        Residente residente1 = new Residente(1, "Sofía", "Gómez", "40111222", "sofia@email.com", "1130000000");
-        Residente residente2 = new Residente(2, "Martín", "Pérez", "38999888", "martin@email.com", "1140000000");
+        Residente residente1 = sistemaBarrio.registrarResidente(
+                "Sofía",
+                "Gómez",
+                "40111222",
+                "sofia@email.com",
+                "1130000000",
+                vivienda1
+        );
 
-        Visitante visitante1 = new Visitante(1, "Camila Ruiz", "42123123", "AB123CD", "Visita familiar");
-        Visitante visitante2 = new Visitante(2, "Juan Torres", "38111222", "AC456EF", "Reunión con residente");
+        Residente residente2 = sistemaBarrio.registrarResidente(
+                "Martín",
+                "Pérez",
+                "38999888",
+                "martin@email.com",
+                "1140000000",
+                vivienda2
+        );
 
-        vivienda1.agregarResidente(residente1);
-        vivienda2.agregarResidente(residente2);
+        sistemaBarrio.registrarVisitante(
+                residente1,
+                "Camila Ruiz",
+                "42123123",
+                "AB123CD",
+                "Visita familiar"
+        );
 
-        barrio.agregarVivienda(vivienda1);
-        barrio.agregarVivienda(vivienda2);
+        sistemaBarrio.registrarVisitante(
+                residente2,
+                "Juan Torres",
+                "38111222",
+                "AC456EF",
+                "Reunión con residente"
+        );
 
-        residente1.registrarVisitante(visitante1);
-        residente2.registrarVisitante(visitante2);
-
-        residentes.addAll(residente1, residente2);
-        visitantes.addAll(visitante1, visitante2);
+        actualizarTablasDesdeSistema();
     }
 
     public static void main(String[] args) {

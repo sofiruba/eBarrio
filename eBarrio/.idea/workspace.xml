@@ -5,40 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/eBarrio.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/eBarrio.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoAsignado.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoCerrado.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoEnProceso.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoPendiente.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/EstadoResuelto.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/estados/IEstadoReclamo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/reclamo/Reclamo.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../out/production/eBarrio/reclamos/test/TestReclamo.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;nachodcortes&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/sofiruba/eBarrio.git&quot;,
-    &quot;accountId&quot;: &quot;fe3c8cb7-dcb6-49c7-a6aa-c74ea1b9f8af&quot;
-  }
-}</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
@@ -109,6 +93,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
     "Application.eBarrio.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -119,7 +104,6 @@
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/nacho_ny4lh0o/Documents/Facultad/3° Año-1° Cuatri/Proceso de desarrollo de software/eBarrio/eBarrio",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -127,8 +111,8 @@
     "nodejs_package_manager_path": "npm",
     "onboarding.tips.debug.path": "/Users/sofiarubachin/Documents/facultad/datos/TPO/eBarrio/eBarrio/src/Main.java",
     "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.lookFeel",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
@@ -139,7 +123,14 @@
       <recent name="$PROJECT_DIR$/libs" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.eBarrio">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="eBarrio" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="eBarrio" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="app.MainApp" />
       <module name="eBarrio" />
@@ -148,11 +139,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue="Application.eBarrio" />
+      <item itemvalue="Application.Main" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.25134.95" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.25134.95" />
       </set>
     </attachedChunks>
   </component>
@@ -176,11 +177,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Main.java</url>
-          <line>73</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/app/MainApp.java</url>
           <line>26</line>
