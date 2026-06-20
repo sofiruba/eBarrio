@@ -1,64 +1,52 @@
 @startuml
 left to right direction
 
+' Actores Primarios (Izquierda - Inician la interacción en la interfaz)
 actor Administrador
 actor Residente
+
+' Actores Secundarios (Derecha - Participan, asisten o reciben la acción)
 actor "Personal de seguridad" as Seguridad
 actor "Personal de mantenimiento" as Mantenimiento
 
 rectangle "eBarrio" {
   usecase "Iniciar sesion" as UCLogin
-  usecase "Consultar dashboard" as UCDashboard
   usecase "Gestionar residentes" as UCResidentes
-  usecase "Crear cuenta de residente" as UCCuenta
+  usecase "Crear cuenta de sistema" as UCCuenta
   usecase "Gestionar visitantes" as UCVisitantes
-  usecase "Gestionar proveedores" as UCProveedores
-  usecase "Filtrar personas autorizadas" as UCFiltrar
   usecase "Registrar ingreso" as UCIngreso
   usecase "Registrar egreso" as UCEgreso
   usecase "Crear reclamo" as UCReclamo
   usecase "Crear tarea de mantenimiento" as UCTarea
-  usecase "Reportar incidente" as UCIncidente
-  usecase "Consultar solicitudes" as UCConsultarSolicitudes
+  usecase "Reportar incidente seguridad" as UCIncidente
   usecase "Avanzar estado de solicitud" as UCAvanzar
   usecase "Cancelar solicitud" as UCCancelar
   usecase "Consultar notificaciones" as UCNotificaciones
 }
 
+' --- RELACIONES ACTORES PRIMARIOS (De Izquierda a Derecha) ---
 Administrador --> UCLogin
-Administrador --> UCDashboard
 Administrador --> UCResidentes
-Administrador --> UCVisitantes
-Administrador --> UCProveedores
-Administrador --> UCFiltrar
 Administrador --> UCIngreso
 Administrador --> UCEgreso
-Administrador --> UCReclamo
-Administrador --> UCTarea
 Administrador --> UCIncidente
-Administrador --> UCConsultarSolicitudes
+Administrador --> UCTarea
 Administrador --> UCAvanzar
 Administrador --> UCCancelar
 Administrador --> UCNotificaciones
 
 Residente --> UCLogin
-Residente --> UCDashboard
 Residente --> UCVisitantes
-Residente --> UCProveedores
-Residente --> UCFiltrar
 Residente --> UCReclamo
-Residente --> UCConsultarSolicitudes
 Residente --> UCNotificaciones
 
-Seguridad --> UCIngreso
-Seguridad --> UCEgreso
-Seguridad --> UCIncidente
-
-Mantenimiento --> UCTarea
-Mantenimiento --> UCAvanzar
-
 UCResidentes .> UCCuenta : <<include>>
-UCVisitantes .> UCFiltrar : <<include>>
-UCProveedores .> UCFiltrar : <<include>>
-UCIngreso .> UCVisitantes : <<extend>>
+
+' --- RELACIONES ACTORES SECUNDARIOS (Desde el Caso de Uso hacia la Derecha) ---
+UCIngreso <-- Seguridad
+UCEgreso <-- Seguridad
+UCIncidente <-- Seguridad
+
+UCTarea <-- Mantenimiento
+UCAvanzar <-- Mantenimiento
 @enduml

@@ -1,4 +1,5 @@
 @startuml
+skinparam linetype ortho
 skinparam classAttributeIconSize 0
 
 package "app" {
@@ -16,9 +17,17 @@ package "app" {
 }
 
 package "app.views" {
-  class LoginView
-  class AdministradorView
-  class ResidenteView
+  class LoginView {
+    ' COMPLETAR: Agregar componentes JavaFX y métodos
+    - sistemaBarrio: SistemaBarrio
+    + mostrar(): void
+  }
+  class AdministradorView {
+    ' COMPLETAR: Agregar componentes JavaFX y métodos
+  }
+  class ResidenteView {
+    ' COMPLETAR: Agregar componentes JavaFX y métodos
+  }
 }
 
 package "sistema" {
@@ -155,11 +164,20 @@ package "model.solicitud.estados" {
     + mostrarNombreEstado(): String
   }
 
-  class EstadoPendiente
-  class EstadoAsignado
-  class EstadoEnProceso
-  class EstadoResuelto
-  class EstadoCerrado
+  class EstadoPendiente {
+  }
+
+  class EstadoAsignado {
+  }
+
+  class EstadoEnProceso {
+  }
+
+  class EstadoResuelto {
+  }
+
+  class EstadoCerrado {
+  }
 }
 
 package "model.solicitud.reclamo" {
@@ -177,8 +195,22 @@ package "model.solicitud.personal" {
     - nivelRiesgo: String
   }
 
-  class PersonalMantenimiento
-  class PersonalSeguridad
+  class PersonalMantenimiento {
+    - id: int
+    - nombre: String
+    - sector: String
+    + consultarTarea(tarea: TareaMantenimiento): void
+    + actualizarEstadoTarea(tarea: TareaMantenimiento): void
+  }
+
+  class PersonalSeguridad {
+    - id: int
+    - nombre: String
+    - turno: String
+    + controlarAcceso(acceso: Acceso): void
+    + registrarEgreso(acceso: Acceso): void
+    + reportarIncidente(incidente: IncidenteSeguridad): void
+  }
 }
 
 package "model" {
@@ -199,6 +231,8 @@ package "model.notificaciones" {
     + enviar(): void
   }
 }
+
+' Relaciones principales
 
 MainApp --> SistemaBarrio
 MainApp --> LoginView
@@ -224,6 +258,10 @@ Residente "1" o-- "*" Visitante
 Solicitud <|-- Reclamo
 Solicitud <|-- TareaMantenimiento
 Solicitud <|-- IncidenteSeguridad
+
+PersonalSeguridad ..> Acceso
+PersonalSeguridad ..> IncidenteSeguridad
+PersonalMantenimiento ..> TareaMantenimiento
 
 Solicitud --> IEstadoSolicitud
 IEstadoSolicitud <|.. EstadoPendiente

@@ -17,10 +17,6 @@ public class Administrador implements IObservador {
         this.email = email;
     }
 
-    /**
-     * Se ejecuta automáticamente cuando una Solicitud cambia de estado.
-     * El método es llamado por Solicitud.notificarObservadores().
-     */
     @Override
     public void actualizar(Solicitud solicitud) {
         System.out.println("[Notificación -> Administrador " + nombre + "] " +
