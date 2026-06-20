@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -28,6 +29,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import model.accesos.Acceso;
 import model.accesos.Visitante;
@@ -38,6 +40,8 @@ import model.solicitud.Solicitud;
 import sistema.SistemaBarrio;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class MainApp extends Application {
@@ -48,6 +52,7 @@ public class MainApp extends Application {
     }
 
     private final SistemaBarrio sistemaBarrio = new SistemaBarrio();
+    private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final ObservableList<Residente> residentes = FXCollections.observableArrayList();
     private final ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
@@ -137,16 +142,14 @@ public class MainApp extends Application {
         if (modoActual == ModoVista.ADMIN) {
             Button inicio = crearBotonMenu("Inicio");
             Button residentesBtn = crearBotonMenu("Residentes");
-            Button visitantesBtn = crearBotonMenu("Visitantes");
             Button accesosBtn = crearBotonMenu("Accesos");
             Button reclamosBtn = crearBotonMenu("Solicitudes");
 
             inicio.setOnAction(e -> mostrarInicio());
             residentesBtn.setOnAction(e -> mostrarResidentes());
-            visitantesBtn.setOnAction(e -> mostrarVisitantes());
             accesosBtn.setOnAction(e -> mostrarAccesos());
             reclamosBtn.setOnAction(e -> mostrarSolicitudes());
-            sidebar.getChildren().addAll(inicio, residentesBtn, visitantesBtn, accesosBtn, reclamosBtn);
+            sidebar.getChildren().addAll(inicio, residentesBtn, accesosBtn, reclamosBtn);
         } else {
             Button inicio = crearBotonMenu("Mi inicio");
             Button visitantesBtn = crearBotonMenu("Mis visitantes");
@@ -357,18 +360,12 @@ public class MainApp extends Application {
         tablaResidentes = crearTablaResidentes();
 
         VBox contenido = crearContenidoBase("Residentes", "Alta y consulta de residentes del barrio");
-        HBox acciones = new HBox(10, crearBotonPrimario("Nuevo residente", this::mostrarFormularioAgregarResidente));
+        HBox acciones = new HBox(
+                10,
+                crearBotonPrimario("Nuevo residente", this::mostrarFormularioAgregarResidente),
+                crearBotonSecundario("Editar residente", this::mostrarFormularioEditarResidente)
+        );
         contenido.getChildren().addAll(acciones, crearCard("Listado de residentes", tablaResidentes));
-        root.setCenter(crearScroll(contenido));
-    }
-
-    private void mostrarVisitantes() {
-        actualizarTablasDesdeSistema();
-        tablaVisitantes = crearTablaVisitantes();
-
-        VBox contenido = crearContenidoBase("Visitantes", "Visitantes autorizados por residentes");
-        HBox acciones = new HBox(10, crearBotonPrimario("Nuevo visitante", this::mostrarFormularioRegistrarVisitante));
-        contenido.getChildren().addAll(acciones, crearCard("Listado de visitantes", tablaVisitantes));
         root.setCenter(crearScroll(contenido));
     }
 
@@ -385,15 +382,24 @@ public class MainApp extends Application {
 
     private void mostrarAccesos() {
         actualizarTablasDesdeSistema();
+        tablaVisitantes = crearTablaVisitantes();
         tablaAccesos = crearTablaAccesos();
 
-        VBox contenido = crearContenidoBase("Accesos", "Ingresos y egresos registrados");
-        HBox acciones = new HBox(
+        VBox contenido = crearContenidoBase("Accesos y visitantes", "Visitantes autorizados, ingresos y egresos del barrio");
+        HBox accionesVisitantes = new HBox(
+                10,
+                crearBotonPrimario("Nuevo visitante", this::mostrarFormularioRegistrarVisitante)
+        );
+        HBox accionesAccesos = new HBox(
                 10,
                 crearBotonPrimario("Registrar ingreso", this::registrarAccesoVisitanteSeleccionado),
                 crearBotonSecundario("Registrar egreso", this::registrarEgresoAccesoSeleccionado)
         );
-        contenido.getChildren().addAll(acciones, crearCard("Control de accesos", tablaAccesos));
+
+        VBox visitantesCard = crearCard("Visitantes autorizados", tablaVisitantes);
+        VBox accesosCard = crearCard("Ingresos y egresos", tablaAccesos);
+
+        contenido.getChildren().addAll(accionesVisitantes, visitantesCard, accionesAccesos, accesosCard);
         root.setCenter(crearScroll(contenido));
     }
 
@@ -535,7 +541,10 @@ public class MainApp extends Application {
         TableColumn<Residente, String> colTelefono = new TableColumn<>("Telefono");
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
-        tabla.getColumns().addAll(colNombre, colDni, colVivienda, colTelefono);
+        tabla.getColumns().add(colNombre);
+        tabla.getColumns().add(colDni);
+        tabla.getColumns().add(colVivienda);
+        tabla.getColumns().add(colTelefono);
         configurarTabla(tabla);
         tabla.setPrefHeight(420);
         return tabla;
@@ -558,7 +567,10 @@ public class MainApp extends Application {
         TableColumn<Visitante, String> colMotivo = new TableColumn<>("Motivo");
         colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivoVisita"));
 
-        tabla.getColumns().addAll(colNombre, colDni, colPatente, colMotivo);
+        tabla.getColumns().add(colNombre);
+        tabla.getColumns().add(colDni);
+        tabla.getColumns().add(colPatente);
+        tabla.getColumns().add(colMotivo);
         configurarTabla(tabla);
         tabla.setPrefHeight(420);
         return tabla;
@@ -595,7 +607,12 @@ public class MainApp extends Application {
         colFecha.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getFechaCreacion().toString()));
         colFecha.setMinWidth(120);
 
-        tabla.getColumns().addAll(colId, colDescripcion, colSolicitante, colPrioridad, colEstado, colFecha);
+        tabla.getColumns().add(colId);
+        tabla.getColumns().add(colDescripcion);
+        tabla.getColumns().add(colSolicitante);
+        tabla.getColumns().add(colPrioridad);
+        tabla.getColumns().add(colEstado);
+        tabla.getColumns().add(colFecha);
         configurarTabla(tabla);
         tabla.setPrefHeight(330);
         return tabla;
@@ -606,10 +623,13 @@ public class MainApp extends Application {
         tabla.setItems(accesos);
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Acceso, String> colHora = new TableColumn<>("Ingreso");
-        colHora.setCellValueFactory(data -> new ReadOnlyStringWrapper(
-                data.getValue().getFechaIngreso() == null ? "-" : data.getValue().getFechaIngreso().toLocalTime().withNano(0).toString()
-        ));
+        TableColumn<Acceso, String> colIngreso = new TableColumn<>("Ingreso");
+        colIngreso.setCellValueFactory(data -> new ReadOnlyStringWrapper(formatearFechaHora(data.getValue().getFechaIngreso())));
+        colIngreso.setMinWidth(150);
+
+        TableColumn<Acceso, String> colEgreso = new TableColumn<>("Egreso");
+        colEgreso.setCellValueFactory(data -> new ReadOnlyStringWrapper(formatearFechaHora(data.getValue().getFechaEgreso())));
+        colEgreso.setMinWidth(150);
 
         TableColumn<Acceso, String> colVisitante = new TableColumn<>("Visitante");
         colVisitante.setCellValueFactory(new PropertyValueFactory<>("nombreVisitante"));
@@ -620,7 +640,11 @@ public class MainApp extends Application {
         TableColumn<Acceso, String> colEstado = new TableColumn<>("Estado");
         colEstado.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().estaActivo() ? "Activo" : "Finalizado"));
 
-        tabla.getColumns().addAll(colHora, colVisitante, colDni, colEstado);
+        tabla.getColumns().add(colIngreso);
+        tabla.getColumns().add(colEgreso);
+        tabla.getColumns().add(colVisitante);
+        tabla.getColumns().add(colDni);
+        tabla.getColumns().add(colEstado);
         configurarTabla(tabla);
         tabla.setPrefHeight(330);
         return tabla;
@@ -629,6 +653,10 @@ public class MainApp extends Application {
     private <T> void configurarTabla(TableView<T> tabla) {
         tabla.setFixedCellSize(42);
         tabla.setMinHeight(220);
+    }
+
+    private String formatearFechaHora(LocalDateTime fechaHora) {
+        return fechaHora == null ? "-" : fechaHora.format(FORMATO_FECHA_HORA);
     }
 
     private void mostrarFormularioAgregarResidente() {
@@ -655,15 +683,16 @@ public class MainApp extends Application {
         Optional<ButtonType> resultado = dialog.showAndWait();
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank() || email.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI y email son obligatorios.");
+            if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank()
+                    || email.getText().isBlank() || lote.getText().isBlank() || direccion.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI, email, lote y direccion son obligatorios.");
                 return;
             }
 
             Vivienda vivienda = sistemaBarrio.registrarVivienda(
                     barrioPrincipal,
-                    textoOValor(lote, "Sin lote"),
-                    textoOValor(direccion, "Sin direccion")
+                    lote.getText(),
+                    direccion.getText()
             );
             Residente residente = sistemaBarrio.registrarResidente(
                     nombre.getText(),
@@ -675,6 +704,64 @@ public class MainApp extends Application {
             );
             sistemaBarrio.crearCuentaResidenteSiNoExiste(residente, dni.getText());
             mostrarAlerta("Cuenta creada", "Usuario: " + residente.getEmail() + "\nClave inicial: " + dni.getText());
+            actualizarYVolverAResidentes();
+        }
+    }
+
+    private void mostrarFormularioEditarResidente() {
+        Residente residente = obtenerResidenteSeleccionado();
+        if (residente == null) {
+            mostrarAlerta("Seleccion requerida", "Selecciona un residente de la tabla para modificarlo.");
+            return;
+        }
+
+        Vivienda vivienda = residente.getVivienda();
+        Dialog<ButtonType> dialog = crearDialogo("Editar residente", "Modificar datos de " + residente.getNombre() + " " + residente.getApellido());
+
+        TextField nombre = campo("Nombre");
+        nombre.setText(residente.getNombre());
+        TextField apellido = campo("Apellido");
+        apellido.setText(residente.getApellido());
+        TextField dni = campo("DNI");
+        dni.setText(residente.getDni());
+        TextField email = campo("Email");
+        email.setText(residente.getEmail());
+        TextField telefono = campo("Telefono");
+        telefono.setText(residente.getTelefono());
+        TextField lote = campo("Lote / vivienda");
+        lote.setText(vivienda == null ? "" : vivienda.getLote());
+        TextField direccion = campo("Direccion de vivienda");
+        direccion.setText(vivienda == null ? "" : vivienda.getDireccion());
+
+        GridPane grid = crearGridFormulario();
+        agregarFila(grid, 0, "Nombre", nombre);
+        agregarFila(grid, 1, "Apellido", apellido);
+        agregarFila(grid, 2, "DNI", dni);
+        agregarFila(grid, 3, "Email", email);
+        agregarFila(grid, 4, "Telefono", telefono);
+        agregarFila(grid, 5, "Lote", lote);
+        agregarFila(grid, 6, "Direccion", direccion);
+
+        dialog.getDialogPane().setContent(grid);
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank()
+                    || email.getText().isBlank() || lote.getText().isBlank() || direccion.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI, email, lote y direccion son obligatorios.");
+                return;
+            }
+
+            sistemaBarrio.actualizarResidente(
+                    residente,
+                    nombre.getText(),
+                    apellido.getText(),
+                    dni.getText(),
+                    email.getText(),
+                    telefono.getText(),
+                    lote.getText(),
+                    direccion.getText()
+            );
             actualizarYVolverAResidentes();
         }
     }
@@ -691,12 +778,14 @@ public class MainApp extends Application {
         TextField dni = campo("DNI");
         TextField patente = campo("Patente");
         TextField motivo = campo("Motivo de visita");
+        CheckBox registrarAccesoAhora = new CheckBox("Desea registrar acceso ahora");
 
         GridPane grid = crearGridFormulario();
         agregarFila(grid, 0, "Nombre", nombre);
         agregarFila(grid, 1, "DNI", dni);
         agregarFila(grid, 2, "Patente", patente);
         agregarFila(grid, 3, "Motivo", motivo);
+        agregarFila(grid, 4, "Ingreso", registrarAccesoAhora);
 
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> resultado = dialog.showAndWait();
@@ -707,11 +796,14 @@ public class MainApp extends Application {
                 return;
             }
 
-            sistemaBarrio.registrarVisitante(residente, nombre.getText(), dni.getText(), patente.getText(), motivo.getText());
+            Visitante visitante = sistemaBarrio.registrarVisitante(residente, nombre.getText(), dni.getText(), patente.getText(), motivo.getText());
+            if (registrarAccesoAhora.isSelected()) {
+                sistemaBarrio.registrarAcceso(visitante.getNombre(), visitante.getDni());
+            }
             if (modoActual == ModoVista.RESIDENTE) {
                 actualizarYVolverAMisVisitantes();
             } else {
-                actualizarYVolverAVisitantes();
+                actualizarYVolverAAccesos();
             }
         }
     }
@@ -809,9 +901,14 @@ public class MainApp extends Application {
     }
 
     private void registrarAccesoVisitanteSeleccionado() {
-        Visitante visitante = obtenerVisitanteSeleccionado();
+        Visitante visitante = seleccionarVisitanteParaAcceso();
         if (visitante == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona un visitante para registrar el ingreso.");
+            return;
+        }
+
+        Acceso accesoActivo = sistemaBarrio.buscarAccesoActivoPorDni(visitante.getDni());
+        if (accesoActivo != null) {
+            mostrarAlerta("Ingreso ya registrado", visitante.getNombre() + " ya tiene un acceso activo.");
             return;
         }
 
@@ -825,9 +922,55 @@ public class MainApp extends Application {
             mostrarAlerta("Seleccion requerida", "Selecciona un acceso activo para registrar el egreso.");
             return;
         }
+        if (!acceso.estaActivo()) {
+            mostrarAlerta("Acceso finalizado", "Ese acceso ya tiene egreso registrado.");
+            return;
+        }
 
         sistemaBarrio.registrarEgresoAcceso(acceso);
         actualizarYVolverAAccesos();
+    }
+
+    private Visitante seleccionarVisitanteParaAcceso() {
+        Dialog<Visitante> dialog = new Dialog<>();
+        dialog.setTitle("Registrar ingreso");
+        dialog.setHeaderText("Selecciona un visitante autorizado");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().getStyleClass().add("dialog-pane");
+
+        ComboBox<Visitante> comboVisitantes = new ComboBox<>();
+        comboVisitantes.getItems().addAll(sistemaBarrio.getVisitantes());
+        comboVisitantes.setMaxWidth(Double.MAX_VALUE);
+        comboVisitantes.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Visitante visitante) {
+                if (visitante == null) {
+                    return "";
+                }
+                return visitante.getNombre() + " - DNI " + visitante.getDni() + " - " + visitante.getMotivoVisita();
+            }
+
+            @Override
+            public Visitante fromString(String string) {
+                return null;
+            }
+        });
+
+        if (!comboVisitantes.getItems().isEmpty()) {
+            comboVisitantes.setValue(comboVisitantes.getItems().get(0));
+        }
+
+        VBox contenido = new VBox(10, new Label("Visitante"), comboVisitantes);
+        contenido.setPadding(new Insets(18));
+        dialog.getDialogPane().setContent(contenido);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? comboVisitantes.getValue() : null);
+
+        if (comboVisitantes.getItems().isEmpty()) {
+            mostrarAlerta("Sin visitantes", "No hay visitantes autorizados para registrar ingresos.");
+            return null;
+        }
+
+        return dialog.showAndWait().orElse(null);
     }
 
     private void avanzarEstadoSolicitudSeleccionada() {
@@ -854,10 +997,6 @@ public class MainApp extends Application {
 
     private Residente obtenerResidenteSeleccionado() {
         return tablaResidentes == null ? null : tablaResidentes.getSelectionModel().getSelectedItem();
-    }
-
-    private Visitante obtenerVisitanteSeleccionado() {
-        return tablaVisitantes == null ? null : tablaVisitantes.getSelectionModel().getSelectedItem();
     }
 
     private Solicitud obtenerSolicitudSeleccionada() {
@@ -898,11 +1037,6 @@ public class MainApp extends Application {
     private void actualizarYVolverAResidentes() {
         actualizarTablasDesdeSistema();
         mostrarResidentes();
-    }
-
-    private void actualizarYVolverAVisitantes() {
-        actualizarTablasDesdeSistema();
-        mostrarVisitantes();
     }
 
     private void actualizarYVolverAMisVisitantes() {

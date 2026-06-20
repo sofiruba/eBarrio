@@ -6,9 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="811b3a25-49b6-44fa-a179-6b8070654469" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/MainApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/MainApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/datos.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/data/datos.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/model/accesos/Acceso.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/accesos/Acceso.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sistema/SistemaBarrio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/styles/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +185,7 @@
       <workItem from="1781054781499" duration="623000" />
       <workItem from="1781055434317" duration="1710000" />
       <workItem from="1781089381425" duration="970000" />
-      <workItem from="1781923968583" duration="1442000" />
+      <workItem from="1781923968583" duration="2547000" />
     </task>
     <servers />
   </component>
@@ -195,7 +197,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/app/MainApp.java</url>
-          <line>27</line>
+          <line>28</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

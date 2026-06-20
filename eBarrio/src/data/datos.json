@@ -65,8 +65,8 @@
     },
     {
       "id": 4,
-      "nombre": "facundo",
-      "apellido": "etchart",
+      "nombre": "Facundo",
+      "apellido": "Etchart",
       "dni": "12345678",
       "email": "facu@gmail.com",
       "telefono": "0303456",
@@ -150,12 +150,24 @@
       "id": 1,
       "nombreVisitante": "Camila Ruiz",
       "dniVisitante": "42123123",
-      "finalizado": false
+      "fechaIngreso": "2026-06-20T00:35:24.986276",
+      "fechaEgreso": "2026-06-20T00:35:24.986489",
+      "finalizado": true
     },
     {
       "id": 2,
       "nombreVisitante": "Juan Torres",
       "dniVisitante": "38111222",
+      "fechaIngreso": "2026-06-20T00:35:24.986605",
+      "fechaEgreso": "2026-06-20T00:35:24.986682",
+      "finalizado": true
+    },
+    {
+      "id": 3,
+      "nombreVisitante": "Ignacio Cortes",
+      "dniVisitante": "77777777",
+      "fechaIngreso": "2026-06-20T00:35:24.986744",
+      "fechaEgreso": "2026-06-20T00:35:57.680605",
       "finalizado": true
     }
   ]

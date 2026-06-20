@@ -43,6 +43,8 @@ public class Acceso {
     public String getDniVisitante() { return dniVisitante; }
     public LocalDateTime getFechaIngreso() { return fechaIngreso; }
     public LocalDateTime getFechaEgreso() { return fechaEgreso; }
+    public void setFechaIngreso(LocalDateTime fechaIngreso) { this.fechaIngreso = fechaIngreso; }
+    public void setFechaEgreso(LocalDateTime fechaEgreso) { this.fechaEgreso = fechaEgreso; }
 
     @Override
     public String toString() {

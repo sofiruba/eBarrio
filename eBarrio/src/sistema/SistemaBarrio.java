@@ -1,5 +1,6 @@
 package sistema;
 
+import java.time.LocalDateTime;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -142,6 +143,53 @@ public class SistemaBarrio {
 
         guardarDatosSiCorresponde();
         return residente;
+    }
+
+    public void actualizarResidente(
+            Residente residente,
+            String nombre,
+            String apellido,
+            String dni,
+            String email,
+            String telefono,
+            String lote,
+            String direccion
+    ) {
+        if (residente == null) {
+            System.out.println("No se puede actualizar un residente nulo.");
+            return;
+        }
+
+        String emailAnterior = residente.getEmail();
+        residente.setNombre(nombre);
+        residente.setApellido(apellido);
+        residente.setDni(dni);
+        residente.setEmail(email);
+        residente.setTelefono(telefono);
+
+        Vivienda vivienda = residente.getVivienda();
+        if (vivienda != null) {
+            vivienda.setLote(lote);
+            vivienda.setDireccion(direccion);
+        }
+
+        actualizarEmailCuentaResidente(emailAnterior, email, residente.getId());
+        guardarDatosSiCorresponde();
+        guardarUsuariosJson();
+    }
+
+    private void actualizarEmailCuentaResidente(String emailAnterior, String emailNuevo, int residenteId) {
+        for (int i = 0; i < usuarios.size(); i++) {
+            UsuarioSistema usuario = usuarios.get(i);
+            if (usuario.esResidente() && usuario.getResidenteId() != null && usuario.getResidenteId() == residenteId) {
+                usuarios.set(i, new UsuarioSistema(emailNuevo, usuario.getPassword(), usuario.getRol(), usuario.getResidenteId()));
+                return;
+            }
+            if (usuario.getEmail().equalsIgnoreCase(emailAnterior)) {
+                usuarios.set(i, new UsuarioSistema(emailNuevo, usuario.getPassword(), usuario.getRol(), usuario.getResidenteId()));
+                return;
+            }
+        }
     }
 
     public Visitante registrarVisitante(
@@ -304,6 +352,12 @@ public class SistemaBarrio {
     // ─────────────────────────────────────────────
 
     public Acceso registrarAcceso(String nombreVisitante, String dniVisitante) {
+        Acceso accesoActivo = buscarAccesoActivoPorDni(dniVisitante);
+        if (accesoActivo != null) {
+            System.out.println("El visitante ya tiene un acceso activo: " + dniVisitante);
+            return accesoActivo;
+        }
+
         Acceso acceso = new Acceso(contadorAccesos++, nombreVisitante, dniVisitante);
         acceso.registrarIngreso();
 
@@ -324,6 +378,15 @@ public class SistemaBarrio {
         acceso.registrarEgreso();
         notificar("Egreso registrado: " + acceso.getNombreVisitante(), "Seguridad");
         guardarDatosSiCorresponde();
+    }
+
+    public Acceso buscarAccesoActivoPorDni(String dniVisitante) {
+        for (Acceso acceso : accesos) {
+            if (acceso.getDniVisitante().equals(dniVisitante) && acceso.estaActivo()) {
+                return acceso;
+            }
+        }
+        return null;
     }
 
     // ─────────────────────────────────────────────
@@ -505,7 +568,14 @@ public class SistemaBarrio {
                     extraerCampoJson(accesoJson, "nombreVisitante"),
                     extraerCampoJson(accesoJson, "dniVisitante")
             );
-            if (extraerBooleanoJson(accesoJson, "finalizado")) {
+            String fechaIngreso = extraerCampoJson(accesoJson, "fechaIngreso");
+            String fechaEgreso = extraerCampoJson(accesoJson, "fechaEgreso");
+            if (fechaIngreso != null && !fechaIngreso.isBlank()) {
+                acceso.setFechaIngreso(LocalDateTime.parse(fechaIngreso));
+            }
+            if (fechaEgreso != null && !fechaEgreso.isBlank()) {
+                acceso.setFechaEgreso(LocalDateTime.parse(fechaEgreso));
+            } else if (extraerBooleanoJson(accesoJson, "finalizado")) {
                 registrarEgresoAcceso(acceso);
             }
         }
@@ -772,6 +842,8 @@ public class SistemaBarrio {
             json.append("      \"id\": ").append(acceso.getId()).append(",\n");
             json.append("      \"nombreVisitante\": \"").append(escaparJson(acceso.getNombreVisitante())).append("\",\n");
             json.append("      \"dniVisitante\": \"").append(escaparJson(acceso.getDniVisitante())).append("\",\n");
+            json.append("      \"fechaIngreso\": \"").append(acceso.getFechaIngreso() == null ? "" : acceso.getFechaIngreso()).append("\",\n");
+            json.append("      \"fechaEgreso\": \"").append(acceso.getFechaEgreso() == null ? "" : acceso.getFechaEgreso()).append("\",\n");
             json.append("      \"finalizado\": ").append(!acceso.estaActivo()).append("\n");
             json.append("    }").append(i == accesos.size() - 1 ? "\n" : ",\n");
         }
