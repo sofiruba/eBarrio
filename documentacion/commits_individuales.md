@@ -22,18 +22,17 @@ lineas o integraciones completas.
 | Integrante | Evidencia principal de aporte |
 | --- | --- |
 | Facundo Etchart | Desarrollo inicial y evolucion del modulo de reclamos/solicitudes, estados del patron State y pruebas asociadas. Muchos commits son incrementales y de baja cantidad de lineas, pero muestran evolucion progresiva del modelo. |
-| Sofia Rubachin | Aportes sobre modelo inicial, persistencia, accesos, notificaciones, mejoras de interfaz y ajustes de datos. Sus commits son menos numerosos que los de Facundo, pero varios concentran cambios mas amplios. |
-| Ignacio Cortes | Aportes en documentacion, vista, integraciones, merge y colaboracion sobre fachada/Observer/solicitudes. La cantidad de commits es menor, por lo que conviene explicar en la defensa que parte del trabajo se integro en commits grandes o colaborativos. |
+| Sofia Rubachin | Aportes sobre modelo inicial, persistencia, accesos, notificaciones, interfaz y ajustes de datos. |
+| Ignacio Cortes | Aportes en documentacion, vistas, integraciones, merge y colaboracion sobre fachada/Observer/solicitudes. |
 
-## Recomendacion para la entrega
+## Lectura para la entrega
 
-Para defender mejor la equidad del trabajo, el informe final deberia explicar las
-responsabilidades por modulo, no solo el conteo de commits. La division sugerida es:
+Para defender mejor la equidad del trabajo, el informe final explica las responsabilidades
+por modulo, no solo el conteo de commits. La division de referencia es:
 
 - Facundo Etchart: solicitudes, estados, factory, pruebas de reclamo.
 - Sofia Rubachin: residentes, viviendas, visitantes, datos, persistencia e interfaz.
-- Ignacio Cortes: accesos, administracion, notificaciones, integracion, documentacion y
-  ajustes finales de vista.
+- Ignacio Cortes: accesos, administracion, notificaciones, integracion, documentacion y ajustes finales de vista.
 
-Si antes de entregar se hacen cambios reales adicionales, conviene que cada integrante
-haga su propio commit con un mensaje descriptivo y asociado a su area.
+El historial de Git y este resumen se complementan: los commits muestran evolucion del
+codigo y la tabla por modulo muestra la participacion funcional de cada integrante.

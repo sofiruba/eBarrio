@@ -1,6 +1,70 @@
 @startuml
 skinparam classAttributeIconSize 0
 
+package "app" {
+  class MainApp {
+    - sistemaBarrio: SistemaBarrio
+    - residentes: ObservableList<Residente>
+    - visitantes: ObservableList<Visitante>
+    - solicitudes: ObservableList<Solicitud>
+    - accesos: ObservableList<Acceso>
+    - usuarioActual: UsuarioSistema
+    - residenteActual: Residente
+    + start(stage: Stage): void
+    + main(args: String[]): void
+  }
+}
+
+package "app.views" {
+  class LoginView
+  class AdministradorView
+  class ResidenteView
+}
+
+package "sistema" {
+  class SistemaBarrio {
+    - barrios: List<Barrio>
+    - viviendas: List<Vivienda>
+    - residentes: List<Residente>
+    - visitantes: List<Visitante>
+    - solicitudes: List<Solicitud>
+    - accesos: List<Acceso>
+    - notificaciones: List<Notificacion>
+    - observadoresGlobales: List<IObservador>
+    - administradores: List<Administrador>
+    - usuarios: List<UsuarioSistema>
+    - persistenciaActiva: boolean
+    - emitirNotificaciones: boolean
+    + registrarBarrio(nombre: String, direccion: String): Barrio
+    + registrarVivienda(barrio: Barrio, lote: String, direccion: String): Vivienda
+    + registrarResidente(nombre: String, apellido: String, dni: String, email: String, telefono: String, vivienda: Vivienda): Residente
+    + actualizarResidente(residente: Residente, nombre: String, apellido: String, dni: String, email: String, telefono: String, lote: String, direccion: String): void
+    + registrarVisitante(residente: Residente, nombre: String, dni: String, patente: String, motivoVisita: String, tipo: String, frecuencia: String): Visitante
+    + actualizarVisitante(visitante: Visitante, nombre: String, dni: String, patente: String, motivoVisita: String, tipo: String, frecuencia: String): void
+    + eliminarVisitante(visitante: Visitante): void
+    + crearReclamo(nombre: String, descripcion: String, prioridad: String, tipoReclamo: String): Reclamo
+    + crearTareaMantenimiento(nombre: String, descripcion: String, prioridad: String, sector: String): TareaMantenimiento
+    + crearIncidenteSeguridad(nombre: String, descripcion: String, prioridad: String, nivelRiesgo: String): IncidenteSeguridad
+    + avanzarEstadoSolicitud(solicitud: Solicitud): void
+    + cancelarSolicitud(solicitud: Solicitud): void
+    + registrarAcceso(nombreVisitante: String, dniVisitante: String): Acceso
+    + registrarEgresoAcceso(acceso: Acceso): void
+    + buscarAccesoActivoPorDni(dniVisitante: String): Acceso
+    + notificar(mensaje: String, destinatario: String): Notificacion
+    + cargarDesdeJson(): void
+    + autenticarUsuario(email: String, password: String): UsuarioSistema
+    + crearCuentaResidenteSiNoExiste(residente: Residente, claveInicial: String): void
+  }
+
+  class UsuarioSistema {
+    - email: String
+    - password: String
+    - rol: String
+    - residenteId: Integer
+    + esResidente(): boolean
+  }
+}
+
 package "model.barrio" {
   class Barrio {
     - id: int
@@ -27,8 +91,10 @@ package "model.barrio" {
     - dni: String
     - email: String
     - telefono: String
+    - vivienda: Vivienda
     - visitantes: List<Visitante>
     + registrarVisitante(visitante: Visitante): void
+    + crearReclamo(descripcion: String): void
   }
 }
 
@@ -39,6 +105,9 @@ package "model.accesos" {
     - dni: String
     - patente: String
     - motivoVisita: String
+    - tipo: String
+    - frecuencia: String
+    + mostrarDatos(): String
   }
 
   class Acceso {
@@ -55,7 +124,7 @@ package "model.accesos" {
 
 package "model.solicitud" {
   abstract class Solicitud {
-    - id: int
+    + id: int
     - nombre: String
     - descripcion: String
     - prioridad: String
@@ -64,7 +133,9 @@ package "model.solicitud" {
     - observadores: List<IObservador>
     + avanzar(): void
     + cancelar(): void
+    + mostrarEstado(): void
     + agregarObservador(observador: IObservador): void
+    + quitarObservador(observador: IObservador): void
     + notificarObservadores(): void
   }
 
@@ -129,19 +200,22 @@ package "model.notificaciones" {
   }
 }
 
-package "sistema" {
-  class SistemaBarrio {
-    - solicitudes: List<Solicitud>
-    - accesos: List<Acceso>
-    - notificaciones: List<Notificacion>
-    + crearReclamo(...): Reclamo
-    + crearTareaMantenimiento(...): TareaMantenimiento
-    + crearIncidenteSeguridad(...): IncidenteSeguridad
-    + registrarAcceso(...): Acceso
-    + registrarEgresoAcceso(acceso: Acceso): void
-    + avanzarEstadoSolicitud(solicitud: Solicitud): void
-  }
-}
+MainApp --> SistemaBarrio
+MainApp --> LoginView
+MainApp --> AdministradorView
+MainApp --> ResidenteView
+MainApp --> UsuarioSistema
+
+SistemaBarrio *-- UsuarioSistema
+SistemaBarrio o-- Barrio
+SistemaBarrio o-- Vivienda
+SistemaBarrio o-- Residente
+SistemaBarrio o-- Visitante
+SistemaBarrio o-- Solicitud
+SistemaBarrio o-- Acceso
+SistemaBarrio o-- Notificacion
+SistemaBarrio o-- Administrador
+SistemaBarrio ..> SolicitudFactory
 
 Barrio "1" o-- "*" Vivienda
 Vivienda "1" o-- "*" Residente
@@ -161,9 +235,7 @@ IEstadoSolicitud <|.. EstadoCerrado
 Solicitud --> IObservador
 Administrador ..|> IObservador
 
-SolicitudFactory ..> Solicitud
-SistemaBarrio ..> SolicitudFactory
-SistemaBarrio o-- "*" Solicitud
-SistemaBarrio o-- "*" Acceso
-SistemaBarrio o-- "*" Notificacion
+SolicitudFactory ..> Reclamo
+SolicitudFactory ..> TareaMantenimiento
+SolicitudFactory ..> IncidenteSeguridad
 @enduml

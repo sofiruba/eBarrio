@@ -52,6 +52,7 @@ documentacion/
   cumplimiento.md                     Revision contra la consigna final
   commits_individuales.md             Resumen de participacion en Git
   escenarios_de_prueba.md             Escenarios manuales y automatizables
+  informe_final.md                    Informe final de entrega
   tareas_por_integrante.md            Distribucion de tareas
   informes/                           Informes de fase 1 y fase 2
   uml/                                Diagramas PlantUML
@@ -97,30 +98,29 @@ documentacion/
 - **GRASP Low Coupling / High Cohesion:** paquetes por responsabilidad y acceso a los casos
   de uso a traves de la fachada.
 
+## Repositorio
+
+https://github.com/sofiruba/eBarrio
+
 ## Como ejecutar
 
-La forma recomendada para la defensa es abrir en IntelliJ IDEA la carpeta interna
-`eBarrio/eBarrio`, marcar `src` como Sources Root si hiciera falta y ejecutar
-`app.MainApp`.
+La forma recomendada para la defensa es abrir el proyecto en IntelliJ IDEA y ejecutar
+`app.MainApp` con JavaFX configurado.
 
-Tambien se puede ejecutar por consola desde la carpeta interna `eBarrio/eBarrio`, siempre
-que la maquina tenga JDK instalado:
+Tambien se puede compilar y ejecutar por consola desde la raiz del repositorio:
 
-```powershell
-javac -encoding UTF-8 -d ..\out (Get-ChildItem -Recurse src -Filter *.java | Where-Object { $_.FullName -notlike "*\app\MainApp.java" } | ForEach-Object { $_.FullName })
-java -cp ..\out Main
+```bash
+javac --module-path eBarrio/libs/javafx-sdk-17.0.19/lib --add-modules javafx.controls -encoding UTF-8 -d out $(find eBarrio/src -name '*.java')
+java --module-path eBarrio/libs/javafx-sdk-17.0.19/lib --add-modules javafx.controls -cp out app.MainApp
 ```
 
-Para escenarios de prueba sin JavaFX:
+Para escenarios de prueba por consola:
 
-```powershell
-java -cp ..\out model.solicitud.test.TestReclamo
-java -cp ..\out model.solicitud.test.EscenariosEjecucion
+```bash
+java -cp out Main
+java -cp out model.solicitud.test.TestReclamo
+java -cp out model.solicitud.test.EscenariosEjecucion
 ```
-
-Para `app.MainApp` hace falta JavaFX configurado en el IDE o en el classpath/module-path.
-En este repositorio la ejecucion funcional se valida principalmente desde IntelliJ con la
-carpeta interna del proyecto.
 
 ## Usuarios de prueba
 
@@ -128,14 +128,13 @@ Los usuarios estan en `eBarrio/src/data/usuarios.json`. Ejemplos:
 
 - Administrador: `admin@ebarrio.com` / `admin123`
 - Residente: `sofia@email.com` / `sofia123`
-- Residente: `nacho@gmail.com` / `nacho123`
+- Residente: `martin@email.com` / `martin123`
+- Residente: `ana@email.com` / `ana123`
+- Residente: `facu@gmail.com` / `34567891`
 
 ## Estado para entrega
 
-El codigo implementa los flujos principales y alternativos requeridos. Para cerrar la
-entrega final faltan artefactos documentales externos al codigo:
-
-- Informe final del proyecto.
-- Evidencia de ejecucion con capturas de JavaFX y/o logs de consola.
-- Exportar o actualizar los UML finales si la catedra no acepta solo `.puml`.
-- Confirmar que el repositorio compartido tenga acceso para la docente.
+El codigo implementa los flujos principales y alternativos requeridos. La documentacion
+final se encuentra en `documentacion/informe_final.md`, el checklist de consigna en
+`documentacion/cumplimiento.md`, los escenarios en `documentacion/escenarios_de_prueba.md`
+y los diagramas UML en `documentacion/uml`.

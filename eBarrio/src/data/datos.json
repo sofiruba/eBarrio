@@ -7,32 +7,12 @@
     }
   ],
   "administradores": [
-    {
-      "id": 1,
-      "nombre": "Maria Garcia",
-      "email": "maria@ebarrio.com"
-    }
   ],
   "viviendas": [
     {
       "id": 1,
       "lote": "Lote 12",
       "direccion": "Calle Roble 120"
-    },
-    {
-      "id": 2,
-      "lote": "Lote 18",
-      "direccion": "Calle Lago 85"
-    },
-    {
-      "id": 3,
-      "lote": "Lote 23",
-      "direccion": "Calle Los Pinos 41"
-    },
-    {
-      "id": 4,
-      "lote": "Lote 31",
-      "direccion": "Calle Jacaranda 310"
     }
   ],
   "residentes": [
@@ -44,33 +24,6 @@
       "email": "sofia@email.com",
       "telefono": "1130000000",
       "viviendaId": 1
-    },
-    {
-      "id": 2,
-      "nombre": "Martin",
-      "apellido": "Perez",
-      "dni": "38999888",
-      "email": "martin@email.com",
-      "telefono": "1140000000",
-      "viviendaId": 2
-    },
-    {
-      "id": 3,
-      "nombre": "Ana",
-      "apellido": "Torres",
-      "dni": "36777888",
-      "email": "ana@email.com",
-      "telefono": "1150000000",
-      "viviendaId": 3
-    },
-    {
-      "id": 4,
-      "nombre": "Facundo",
-      "apellido": "Etchart",
-      "dni": "34567891",
-      "email": "facu@gmail.com",
-      "telefono": "1167894321",
-      "viviendaId": 4
     }
   ],
   "visitantes": [
@@ -83,46 +36,6 @@
       "dni": "42123123",
       "patente": "AB123CD",
       "motivoVisita": "Visita familiar"
-    },
-    {
-      "id": 2,
-      "residenteId": 2,
-      "tipo": "Visitante",
-      "frecuencia": "Unica vez",
-      "nombre": "Juan Torres",
-      "dni": "38111222",
-      "patente": "AC456EF",
-      "motivoVisita": "Reunion con residente"
-    },
-    {
-      "id": 3,
-      "residenteId": 3,
-      "tipo": "Proveedor",
-      "frecuencia": "Semanal",
-      "nombre": "Carlos Ruiz",
-      "dni": "34999888",
-      "patente": "EF456GH",
-      "motivoVisita": "Servicio de mantenimiento autorizado"
-    },
-    {
-      "id": 4,
-      "residenteId": 4,
-      "tipo": "Visitante",
-      "frecuencia": "Unica vez",
-      "nombre": "Ignacio Cortes",
-      "dni": "40555111",
-      "patente": "AB123CD",
-      "motivoVisita": "Amistad y amor"
-    },
-    {
-      "id": 6,
-      "residenteId": 4,
-      "tipo": "Proveedor",
-      "frecuencia": "Semanal",
-      "nombre": "Ives Agua",
-      "dni": "30711223344",
-      "patente": "",
-      "motivoVisita": "Entrega semanal de bidones"
     }
   ],
   "solicitudes": [
@@ -130,46 +43,19 @@
       "id": 1,
       "tipo": "reclamo",
       "nombre": "Sofia Gomez",
-      "descripcion": "Luminaria quemada en calle Los Pinos",
+      "descripcion": "Luminaria rota",
       "prioridad": "Alta",
       "detalle": "Infraestructura",
-      "estado": "Pendiente"
+      "estado": "Cerrado"
     },
     {
       "id": 2,
-      "tipo": "reclamo",
-      "nombre": "Martin Perez",
-      "descripcion": "Perdida de agua en vereda",
-      "prioridad": "Media",
-      "detalle": "Agua",
-      "estado": "Pendiente"
-    },
-    {
-      "id": 3,
       "tipo": "tarea",
       "nombre": "Mantenimiento",
-      "descripcion": "Cortar pasto del parque central",
+      "descripcion": "Cortar pasto",
       "prioridad": "Media",
-      "detalle": "Parque central",
-      "estado": "Resuelto"
-    },
-    {
-      "id": 4,
-      "tipo": "incidente",
-      "nombre": "Seguridad",
-      "descripcion": "Persona no identificada en el perimetro",
-      "prioridad": "Alta",
-      "detalle": "Alto",
-      "estado": "En proceso"
-    },
-    {
-      "id": 5,
-      "tipo": "reclamo",
-      "nombre": "Facundo Etchart",
-      "descripcion": "No estan cortando el pasto por mi zona y tengo riesgo de dengue",
-      "prioridad": "Alta",
-      "detalle": "Enfermedad",
-      "estado": "En proceso"
+      "detalle": "Parque",
+      "estado": "Cerrado"
     }
   ],
   "accesos": [
@@ -177,47 +63,35 @@
       "id": 1,
       "nombreVisitante": "Camila Ruiz",
       "dniVisitante": "42123123",
-      "fechaIngreso": "2026-06-20T00:35:24.986276",
-      "fechaEgreso": "2026-06-20T00:35:24.986489",
-      "finalizado": true
-    },
-    {
-      "id": 2,
-      "nombreVisitante": "Juan Torres",
-      "dniVisitante": "38111222",
-      "fechaIngreso": "2026-06-20T00:35:24.986605",
-      "fechaEgreso": "2026-06-20T00:35:24.986682",
-      "finalizado": true
-    },
-    {
-      "id": 3,
-      "nombreVisitante": "Ignacio Cortes",
-      "dniVisitante": "40555111",
-      "fechaIngreso": "2026-06-20T00:35:24.986744",
-      "fechaEgreso": "2026-06-20T00:35:57.680605",
-      "finalizado": true
-    },
-    {
-      "id": 4,
-      "nombreVisitante": "Ives Agua",
-      "dniVisitante": "30711223344",
-      "fechaIngreso": "2026-06-20T00:50:25.944303",
-      "fechaEgreso": "2026-06-20T00:50:34.529949",
+      "fechaIngreso": "2026-06-20T12:36:37.119950",
+      "fechaEgreso": "2026-06-20T12:36:37.129293",
       "finalizado": true
     }
   ],
   "notificaciones": [
     {
       "id": 1,
-      "mensaje": "Ingreso registrado: Ives Agua",
+      "mensaje": "Ingreso registrado: Camila Ruiz",
       "destinatario": "Seguridad",
-      "fecha": "2026-06-20T00:50:25.945096"
+      "fecha": "2026-06-20T12:36:37.124761"
     },
     {
       "id": 2,
-      "mensaje": "Egreso registrado: Ives Agua",
+      "mensaje": "Egreso registrado: Camila Ruiz",
       "destinatario": "Seguridad",
-      "fecha": "2026-06-20T00:50:34.530421"
+      "fecha": "2026-06-20T12:36:37.129408"
+    },
+    {
+      "id": 3,
+      "mensaje": "Se creó el reclamo [1]: Luminaria rota",
+      "destinatario": "Sistema",
+      "fecha": "2026-06-20T12:36:37.132780"
+    },
+    {
+      "id": 4,
+      "mensaje": "Se creó la tarea [2]: Cortar pasto",
+      "destinatario": "Sistema",
+      "fecha": "2026-06-20T12:36:37.135079"
     }
   ]
 }
