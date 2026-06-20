@@ -14,6 +14,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -28,7 +29,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import model.Administrador;
 import model.accesos.Acceso;
 import model.accesos.Visitante;
 import model.barrio.Barrio;
@@ -42,6 +42,11 @@ import java.util.Optional;
 
 public class MainApp extends Application {
 
+    private enum ModoVista {
+        ADMIN,
+        RESIDENTE
+    }
+
     private final SistemaBarrio sistemaBarrio = new SistemaBarrio();
 
     private final ObservableList<Residente> residentes = FXCollections.observableArrayList();
@@ -52,6 +57,9 @@ public class MainApp extends Application {
     private BorderPane root;
     private VBox sidebar;
     private Barrio barrioPrincipal;
+    private ModoVista modoActual = ModoVista.ADMIN;
+    private Residente residenteActual;
+    private SistemaBarrio.UsuarioSistema usuarioActual;
 
     private TableView<Residente> tablaResidentes;
     private TableView<Visitante> tablaVisitantes;
@@ -60,13 +68,13 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        cargarDatosDePrueba();
+        sistemaBarrio.cargarDesdeJson();
+        barrioPrincipal = sistemaBarrio.getBarrios().isEmpty() ? null : sistemaBarrio.getBarrios().get(0);
+        actualizarTablasDesdeSistema();
 
         root = new BorderPane();
         root.getStyleClass().add("root-layout");
-        root.setTop(crearBarraSuperior());
-        root.setLeft(crearMenuLateral());
-        mostrarInicio();
+        root.setCenter(crearLogin());
 
         Scene scene = new Scene(root, 1240, 760);
         cargarEstilos(scene);
@@ -86,7 +94,7 @@ public class MainApp extends Application {
     }
 
     private HBox crearBarraSuperior() {
-        Label menu = new Label("=");
+        Label menu = new Label("eB");
         menu.getStyleClass().add("top-icon");
 
         Label marca = new Label("eBarrio");
@@ -98,10 +106,14 @@ public class MainApp extends Application {
         Label alerta = new Label("Notificaciones: " + sistemaBarrio.getNotificaciones().size());
         alerta.getStyleClass().add("top-pill");
 
-        Label usuario = new Label("Administrador");
+        Label usuario = new Label(modoActual == ModoVista.ADMIN ? "Administrador" : nombreResidenteActual());
         usuario.getStyleClass().add("top-user");
 
-        HBox top = new HBox(14, menu, marca, spacer, alerta, usuario);
+        Button cerrarSesion = new Button("Cerrar sesion");
+        cerrarSesion.getStyleClass().add("view-switch");
+        cerrarSesion.setOnAction(e -> cerrarSesion());
+
+        HBox top = new HBox(14, menu, marca, spacer, alerta, usuario, cerrarSesion);
         top.setAlignment(Pos.CENTER_LEFT);
         top.getStyleClass().add("topbar");
         return top;
@@ -117,36 +129,108 @@ public class MainApp extends Application {
         Label subtitulo = new Label("Gestion de barrios cerrados");
         subtitulo.getStyleClass().add("subtitle");
 
-        Button inicio = crearBotonMenu("Inicio");
-        Button residentesBtn = crearBotonMenu("Residentes");
-        Button visitantesBtn = crearBotonMenu("Visitantes");
-        Button accesosBtn = crearBotonMenu("Accesos");
-        Button reclamosBtn = crearBotonMenu("Solicitudes");
-        Button nuevoReclamoBtn = crearBotonMenu("Nuevo reclamo");
+        Label modo = new Label(modoActual == ModoVista.ADMIN ? "Panel administrador" : "Panel residente");
+        modo.getStyleClass().add("menu-section");
 
-        inicio.setOnAction(e -> mostrarInicio());
-        residentesBtn.setOnAction(e -> mostrarResidentes());
-        visitantesBtn.setOnAction(e -> mostrarVisitantes());
-        accesosBtn.setOnAction(e -> mostrarAccesos());
-        reclamosBtn.setOnAction(e -> mostrarSolicitudes());
-        nuevoReclamoBtn.setOnAction(e -> mostrarFormularioCrearReclamo());
+        sidebar = new VBox(10, logoMark, logo, subtitulo, modo);
 
-        sidebar = new VBox(
-                10,
-                logoMark,
-                logo,
-                subtitulo,
-                inicio,
-                residentesBtn,
-                visitantesBtn,
-                accesosBtn,
-                reclamosBtn,
-                nuevoReclamoBtn
-        );
+        if (modoActual == ModoVista.ADMIN) {
+            Button inicio = crearBotonMenu("Inicio");
+            Button residentesBtn = crearBotonMenu("Residentes");
+            Button visitantesBtn = crearBotonMenu("Visitantes");
+            Button accesosBtn = crearBotonMenu("Accesos");
+            Button reclamosBtn = crearBotonMenu("Solicitudes");
+
+            inicio.setOnAction(e -> mostrarInicio());
+            residentesBtn.setOnAction(e -> mostrarResidentes());
+            visitantesBtn.setOnAction(e -> mostrarVisitantes());
+            accesosBtn.setOnAction(e -> mostrarAccesos());
+            reclamosBtn.setOnAction(e -> mostrarSolicitudes());
+            sidebar.getChildren().addAll(inicio, residentesBtn, visitantesBtn, accesosBtn, reclamosBtn);
+        } else {
+            Button inicio = crearBotonMenu("Mi inicio");
+            Button visitantesBtn = crearBotonMenu("Mis visitantes");
+            Button reclamosBtn = crearBotonMenu("Mis reclamos");
+            Button nuevoReclamoBtn = crearBotonMenu("Nuevo reclamo");
+
+            inicio.setOnAction(e -> mostrarInicioResidente());
+            visitantesBtn.setOnAction(e -> mostrarMisVisitantes());
+            reclamosBtn.setOnAction(e -> mostrarMisSolicitudes());
+            nuevoReclamoBtn.setOnAction(e -> mostrarFormularioCrearReclamo());
+            sidebar.getChildren().addAll(inicio, visitantesBtn, reclamosBtn, nuevoReclamoBtn);
+        }
+
         sidebar.getStyleClass().add("sidebar");
         sidebar.setPadding(new Insets(26, 18, 26, 18));
         sidebar.setPrefWidth(235);
         return sidebar;
+    }
+
+    private void abrirAppSegunSesion() {
+        root.setLeft(crearMenuLateral());
+        root.setTop(crearBarraSuperior());
+        if (modoActual == ModoVista.ADMIN) {
+            mostrarInicio();
+        } else {
+            asegurarResidenteActual();
+            mostrarInicioResidente();
+        }
+    }
+
+    private void cerrarSesion() {
+        usuarioActual = null;
+        modoActual = ModoVista.ADMIN;
+        residenteActual = null;
+        root.setTop(null);
+        root.setLeft(null);
+        root.setCenter(crearLogin());
+    }
+
+    private VBox crearLogin() {
+        Label marca = new Label("eBarrio");
+        marca.getStyleClass().add("login-brand");
+
+        Label titulo = new Label("Iniciar sesion");
+        titulo.getStyleClass().add("login-title");
+
+        TextField email = campo("Email");
+        PasswordField password = new PasswordField();
+        password.setPromptText("Clave");
+        password.getStyleClass().add("text-field");
+        password.setPrefWidth(360);
+
+        Label ayuda = new Label("Los usuarios se cargan desde src/data/usuarios.json");
+        ayuda.getStyleClass().add("login-help");
+
+        Button ingresar = crearBotonPrimario("Ingresar", () -> intentarLogin(email.getText(), password.getText()));
+        ingresar.setMaxWidth(Double.MAX_VALUE);
+
+        VBox form = new VBox(14, marca, titulo, email, password, ingresar, ayuda);
+        form.getStyleClass().add("login-card");
+        form.setAlignment(Pos.CENTER_LEFT);
+        form.setMaxWidth(430);
+
+        VBox wrapper = new VBox(form);
+        wrapper.getStyleClass().add("login-page");
+        wrapper.setAlignment(Pos.CENTER);
+        return wrapper;
+    }
+
+    private void intentarLogin(String email, String password) {
+        SistemaBarrio.UsuarioSistema usuario = sistemaBarrio.autenticarUsuario(email, password);
+        if (usuario != null) {
+            usuarioActual = usuario;
+            modoActual = usuario.esResidente() ? ModoVista.RESIDENTE : ModoVista.ADMIN;
+            residenteActual = modoActual == ModoVista.RESIDENTE ? buscarResidentePorId(usuario.getResidenteId()) : null;
+            if (modoActual == ModoVista.RESIDENTE && residenteActual == null) {
+                mostrarAlerta("Usuario sin residente", "El usuario existe, pero no tiene un residente asociado.");
+                return;
+            }
+            abrirAppSegunSesion();
+            return;
+        }
+
+        mostrarAlerta("No se pudo iniciar sesion", "Revisa el email y la clave cargados en usuarios.json.");
     }
 
     private Button crearBotonMenu(String texto) {
@@ -175,14 +259,58 @@ public class MainApp extends Application {
         VBox reclamosCard = crearCardConAccion("Solicitudes recientes", "Ver todas", this::mostrarSolicitudes, tablaSolicitudes);
         VBox accesosCard = crearCardConAccion("Accesos de hoy", "Ver todos", this::mostrarAccesos, tablaAccesos);
 
-        HBox filaTablas = new HBox(16, reclamosCard, accesosCard);
-        HBox.setHgrow(reclamosCard, Priority.ALWAYS);
-        HBox.setHgrow(accesosCard, Priority.ALWAYS);
+        VBox filaTablas = new VBox(16, reclamosCard, accesosCard);
 
         VBox tareas = crearResumenOperativo();
 
         contenido.getChildren().addAll(metricas, filaTablas, tareas);
         root.setCenter(crearScroll(contenido));
+    }
+
+    private void mostrarInicioResidente() {
+        asegurarResidenteActual();
+        actualizarTablasDesdeSistema();
+
+        VBox contenido = crearContenidoBase("Hola, " + residenteActual.getNombre(), "Vista personal de vivienda, visitantes y reclamos");
+
+        Vivienda vivienda = residenteActual.getVivienda();
+        HBox metricas = new HBox(14,
+                crearMetrica("Vivienda", vivienda == null ? "S/D" : vivienda.getLote()),
+                crearMetrica("Visitantes", String.valueOf(residenteActual.getVisitantes().size())),
+                crearMetrica("Mis reclamos", String.valueOf(contarSolicitudesDelResidente())),
+                crearMetrica("Notificaciones", String.valueOf(sistemaBarrio.getNotificaciones().size()))
+        );
+        metricas.getStyleClass().add("metric-row");
+
+        Label viviendaTitulo = crearTituloCard("Datos de vivienda");
+        VBox datosVivienda = new VBox(
+                8,
+                crearMiniDato("Lote", vivienda == null ? "Sin vivienda" : vivienda.getLote()),
+                crearMiniDato("Direccion", vivienda == null ? "Sin direccion" : vivienda.getDireccion()),
+                crearMiniDato("Contacto", residenteActual.getTelefono().isBlank() ? "Sin telefono" : residenteActual.getTelefono())
+        );
+        VBox viviendaCard = new VBox(14, viviendaTitulo, datosVivienda);
+        viviendaCard.getStyleClass().add("card");
+
+        tablaVisitantes = crearTablaVisitantes();
+        visitantes.setAll(residenteActual.getVisitantes());
+
+        VBox visitantesCard = crearCardConAccion("Visitantes autorizados", "Agregar", this::mostrarFormularioRegistrarVisitante, tablaVisitantes);
+        VBox fila = new VBox(16, viviendaCard, visitantesCard);
+
+        contenido.getChildren().addAll(metricas, fila, crearAccionesResidente());
+        root.setCenter(crearScroll(contenido));
+    }
+
+    private VBox crearAccionesResidente() {
+        Button nuevoVisitante = crearBotonPrimario("Autorizar visitante", this::mostrarFormularioRegistrarVisitante);
+        Button nuevoReclamo = crearBotonSecundario("Crear reclamo", this::mostrarFormularioCrearReclamo);
+        Button verReclamos = crearBotonSecundario("Ver mis reclamos", this::mostrarMisSolicitudes);
+        HBox acciones = new HBox(10, nuevoVisitante, nuevoReclamo, verReclamos);
+        acciones.setAlignment(Pos.CENTER_LEFT);
+        VBox card = new VBox(14, crearTituloCard("Acciones rapidas"), acciones);
+        card.getStyleClass().add("card");
+        return card;
     }
 
     private VBox crearResumenOperativo() {
@@ -244,6 +372,17 @@ public class MainApp extends Application {
         root.setCenter(crearScroll(contenido));
     }
 
+    private void mostrarMisVisitantes() {
+        asegurarResidenteActual();
+        tablaVisitantes = crearTablaVisitantes();
+        visitantes.setAll(residenteActual.getVisitantes());
+
+        VBox contenido = crearContenidoBase("Mis visitantes", "Personas autorizadas para ingresar a tu vivienda");
+        HBox acciones = new HBox(10, crearBotonPrimario("Autorizar visitante", this::mostrarFormularioRegistrarVisitante));
+        contenido.getChildren().addAll(acciones, crearCard("Visitantes autorizados", tablaVisitantes));
+        root.setCenter(crearScroll(contenido));
+    }
+
     private void mostrarAccesos() {
         actualizarTablasDesdeSistema();
         tablaAccesos = crearTablaAccesos();
@@ -272,6 +411,17 @@ public class MainApp extends Application {
                 crearBotonSecundario("Cancelar", this::cancelarSolicitudSeleccionada)
         );
         contenido.getChildren().addAll(acciones, crearCard("Seguimiento de solicitudes", tablaSolicitudes));
+        root.setCenter(crearScroll(contenido));
+    }
+
+    private void mostrarMisSolicitudes() {
+        asegurarResidenteActual();
+        tablaSolicitudes = crearTablaSolicitudes();
+        solicitudes.setAll(solicitudesDelResidente());
+
+        VBox contenido = crearContenidoBase("Mis reclamos", "Seguimiento de reclamos cargados por tu usuario");
+        HBox acciones = new HBox(10, crearBotonPrimario("Nuevo reclamo", this::mostrarFormularioCrearReclamo));
+        contenido.getChildren().addAll(acciones, crearCard("Mis solicitudes", tablaSolicitudes));
         root.setCenter(crearScroll(contenido));
     }
 
@@ -386,6 +536,7 @@ public class MainApp extends Application {
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
 
         tabla.getColumns().addAll(colNombre, colDni, colVivienda, colTelefono);
+        configurarTabla(tabla);
         tabla.setPrefHeight(420);
         return tabla;
     }
@@ -408,6 +559,7 @@ public class MainApp extends Application {
         colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivoVisita"));
 
         tabla.getColumns().addAll(colNombre, colDni, colPatente, colMotivo);
+        configurarTabla(tabla);
         tabla.setPrefHeight(420);
         return tabla;
     }
@@ -419,22 +571,32 @@ public class MainApp extends Application {
 
         TableColumn<Solicitud, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(data -> new ReadOnlyStringWrapper("#" + data.getValue().getId()));
+        colId.setMinWidth(72);
 
         TableColumn<Solicitud, String> colDescripcion = new TableColumn<>("Descripcion");
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        colDescripcion.setMinWidth(280);
+
+        TableColumn<Solicitud, String> colSolicitante = new TableColumn<>("Solicitante");
+        colSolicitante.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colSolicitante.setMinWidth(160);
 
         TableColumn<Solicitud, String> colPrioridad = new TableColumn<>("Prioridad");
         colPrioridad.setCellValueFactory(new PropertyValueFactory<>("prioridad"));
+        colPrioridad.setMinWidth(110);
 
         TableColumn<Solicitud, String> colEstado = new TableColumn<>("Estado");
         colEstado.setCellValueFactory(data -> new ReadOnlyStringWrapper(
                 data.getValue().getEstado().mostrarNombreEstado()
         ));
+        colEstado.setMinWidth(130);
 
         TableColumn<Solicitud, String> colFecha = new TableColumn<>("Fecha");
         colFecha.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getFechaCreacion().toString()));
+        colFecha.setMinWidth(120);
 
-        tabla.getColumns().addAll(colId, colDescripcion, colPrioridad, colEstado, colFecha);
+        tabla.getColumns().addAll(colId, colDescripcion, colSolicitante, colPrioridad, colEstado, colFecha);
+        configurarTabla(tabla);
         tabla.setPrefHeight(330);
         return tabla;
     }
@@ -459,8 +621,14 @@ public class MainApp extends Application {
         colEstado.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().estaActivo() ? "Activo" : "Finalizado"));
 
         tabla.getColumns().addAll(colHora, colVisitante, colDni, colEstado);
+        configurarTabla(tabla);
         tabla.setPrefHeight(330);
         return tabla;
+    }
+
+    private <T> void configurarTabla(TableView<T> tabla) {
+        tabla.setFixedCellSize(42);
+        tabla.setMinHeight(220);
     }
 
     private void mostrarFormularioAgregarResidente() {
@@ -472,6 +640,7 @@ public class MainApp extends Application {
         TextField email = campo("Email");
         TextField telefono = campo("Telefono");
         TextField lote = campo("Lote / vivienda");
+        TextField direccion = campo("Direccion de vivienda");
 
         GridPane grid = crearGridFormulario();
         agregarFila(grid, 0, "Nombre", nombre);
@@ -480,22 +649,23 @@ public class MainApp extends Application {
         agregarFila(grid, 3, "Email", email);
         agregarFila(grid, 4, "Telefono", telefono);
         agregarFila(grid, 5, "Lote", lote);
+        agregarFila(grid, 6, "Direccion", direccion);
 
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> resultado = dialog.showAndWait();
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-            if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "Nombre, apellido y DNI son obligatorios.");
+            if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank() || email.getText().isBlank()) {
+                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI y email son obligatorios.");
                 return;
             }
 
             Vivienda vivienda = sistemaBarrio.registrarVivienda(
                     barrioPrincipal,
                     textoOValor(lote, "Sin lote"),
-                    "Sin direccion cargada"
+                    textoOValor(direccion, "Sin direccion")
             );
-            sistemaBarrio.registrarResidente(
+            Residente residente = sistemaBarrio.registrarResidente(
                     nombre.getText(),
                     apellido.getText(),
                     dni.getText(),
@@ -503,14 +673,15 @@ public class MainApp extends Application {
                     telefono.getText(),
                     vivienda
             );
+            sistemaBarrio.crearCuentaResidenteSiNoExiste(residente, dni.getText());
+            mostrarAlerta("Cuenta creada", "Usuario: " + residente.getEmail() + "\nClave inicial: " + dni.getText());
             actualizarYVolverAResidentes();
         }
     }
 
     private void mostrarFormularioRegistrarVisitante() {
-        Residente residente = obtenerResidenteSeleccionado();
+        Residente residente = resolverResidenteParaOperacion("Seleccionar residente", "Elige a quien autoriza el visitante");
         if (residente == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona un residente para asociar el visitante.");
             return;
         }
 
@@ -537,14 +708,17 @@ public class MainApp extends Application {
             }
 
             sistemaBarrio.registrarVisitante(residente, nombre.getText(), dni.getText(), patente.getText(), motivo.getText());
-            actualizarYVolverAVisitantes();
+            if (modoActual == ModoVista.RESIDENTE) {
+                actualizarYVolverAMisVisitantes();
+            } else {
+                actualizarYVolverAVisitantes();
+            }
         }
     }
 
     private void mostrarFormularioCrearReclamo() {
-        Residente residente = obtenerResidenteSeleccionado();
+        Residente residente = resolverResidenteParaOperacion("Seleccionar residente", "Elige quien carga el reclamo");
         if (residente == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona un residente para cargarle un reclamo.");
             return;
         }
 
@@ -574,7 +748,11 @@ public class MainApp extends Application {
                     prioridad.getValue(),
                     textoOValor(tipo, "General")
             );
-            actualizarYVolverASolicitudes();
+            if (modoActual == ModoVista.RESIDENTE) {
+                actualizarYVolverAMisSolicitudes();
+            } else {
+                actualizarYVolverASolicitudes();
+            }
         }
     }
 
@@ -686,6 +864,37 @@ public class MainApp extends Application {
         return tablaSolicitudes == null ? null : tablaSolicitudes.getSelectionModel().getSelectedItem();
     }
 
+    private Residente resolverResidenteParaOperacion(String titulo, String header) {
+        asegurarResidenteActual();
+        if (modoActual == ModoVista.RESIDENTE) {
+            return residenteActual;
+        }
+
+        Residente seleccionado = obtenerResidenteSeleccionado();
+        if (seleccionado != null) {
+            return seleccionado;
+        }
+
+        Dialog<Residente> dialog = new Dialog<>();
+        dialog.setTitle(titulo);
+        dialog.setHeaderText(header);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.getDialogPane().getStyleClass().add("dialog-pane");
+
+        ComboBox<Residente> comboResidentes = new ComboBox<>();
+        comboResidentes.getItems().addAll(sistemaBarrio.getResidentes());
+        if (!comboResidentes.getItems().isEmpty()) {
+            comboResidentes.setValue(comboResidentes.getItems().get(0));
+        }
+        comboResidentes.setMaxWidth(Double.MAX_VALUE);
+
+        VBox contenido = new VBox(10, new Label("Residente"), comboResidentes);
+        contenido.setPadding(new Insets(18));
+        dialog.getDialogPane().setContent(contenido);
+        dialog.setResultConverter(button -> button == ButtonType.OK ? comboResidentes.getValue() : null);
+        return dialog.showAndWait().orElse(null);
+    }
+
     private void actualizarYVolverAResidentes() {
         actualizarTablasDesdeSistema();
         mostrarResidentes();
@@ -696,6 +905,11 @@ public class MainApp extends Application {
         mostrarVisitantes();
     }
 
+    private void actualizarYVolverAMisVisitantes() {
+        actualizarTablasDesdeSistema();
+        mostrarMisVisitantes();
+    }
+
     private void actualizarYVolverAAccesos() {
         actualizarTablasDesdeSistema();
         mostrarAccesos();
@@ -704,6 +918,11 @@ public class MainApp extends Application {
     private void actualizarYVolverASolicitudes() {
         actualizarTablasDesdeSistema();
         mostrarSolicitudes();
+    }
+
+    private void actualizarYVolverAMisSolicitudes() {
+        actualizarTablasDesdeSistema();
+        mostrarMisSolicitudes();
     }
 
     private void actualizarTablasDesdeSistema() {
@@ -770,40 +989,54 @@ public class MainApp extends Application {
         return campo.getText().isBlank() ? valorPorDefecto : campo.getText();
     }
 
+    private void asegurarResidenteActual() {
+        if (residenteActual == null && modoActual == ModoVista.RESIDENTE && !sistemaBarrio.getResidentes().isEmpty()) {
+            residenteActual = sistemaBarrio.getResidentes().get(0);
+        }
+    }
+
+    private String nombreResidenteActual() {
+        asegurarResidenteActual();
+        return residenteActual == null ? "Residente" : residenteActual.getNombre() + " " + residenteActual.getApellido();
+    }
+
+    private int contarSolicitudesDelResidente() {
+        return solicitudesDelResidente().size();
+    }
+
+    private ObservableList<Solicitud> solicitudesDelResidente() {
+        ObservableList<Solicitud> resultado = FXCollections.observableArrayList();
+        if (residenteActual == null) {
+            return resultado;
+        }
+
+        String nombreCompleto = residenteActual.getNombre() + " " + residenteActual.getApellido();
+        for (Solicitud solicitud : sistemaBarrio.getSolicitudes()) {
+            if (nombreCompleto.equalsIgnoreCase(solicitud.getNombre())) {
+                resultado.add(solicitud);
+            }
+        }
+        return resultado;
+    }
+
+    private Residente buscarResidentePorId(Integer id) {
+        if (id == null) {
+            return null;
+        }
+        for (Residente residente : sistemaBarrio.getResidentes()) {
+            if (residente.getId() == id) {
+                return residente;
+            }
+        }
+        return null;
+    }
+
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-    private void cargarDatosDePrueba() {
-        barrioPrincipal = sistemaBarrio.registrarBarrio("eBarrio Norte", "Av. Central 1000");
-        sistemaBarrio.registrarObservadorGlobal(new Administrador(1, "Maria Garcia", "maria@ebarrio.com"));
-
-        Vivienda vivienda1 = sistemaBarrio.registrarVivienda(barrioPrincipal, "Lote 12", "Calle Roble 120");
-        Vivienda vivienda2 = sistemaBarrio.registrarVivienda(barrioPrincipal, "Lote 18", "Calle Lago 85");
-        Vivienda vivienda3 = sistemaBarrio.registrarVivienda(barrioPrincipal, "Lote 23", "Calle Los Pinos 41");
-
-        Residente residente1 = sistemaBarrio.registrarResidente("Sofia", "Gomez", "40111222", "sofia@email.com", "1130000000", vivienda1);
-        Residente residente2 = sistemaBarrio.registrarResidente("Martin", "Perez", "38999888", "martin@email.com", "1140000000", vivienda2);
-        Residente residente3 = sistemaBarrio.registrarResidente("Ana", "Torres", "36777888", "ana@email.com", "1150000000", vivienda3);
-
-        sistemaBarrio.registrarVisitante(residente1, "Camila Ruiz", "42123123", "AB123CD", "Visita familiar");
-        sistemaBarrio.registrarVisitante(residente2, "Juan Torres", "38111222", "AC456EF", "Reunion con residente");
-        sistemaBarrio.registrarVisitante(residente3, "Carlos Ruiz", "34999888", "EF456GH", "Proveedor autorizado");
-
-        sistemaBarrio.crearReclamo("Sofia Gomez", "Luminaria quemada en calle Los Pinos", "Alta", "Infraestructura");
-        sistemaBarrio.crearReclamo("Martin Perez", "Perdida de agua en vereda", "Media", "Agua");
-        sistemaBarrio.crearTareaMantenimiento("Mantenimiento", "Cortar pasto del parque central", "Media", "Parque central");
-        sistemaBarrio.crearIncidenteSeguridad("Seguridad", "Persona no identificada en el perimetro", "Alta", "Alto");
-
-        sistemaBarrio.registrarAcceso("Camila Ruiz", "42123123");
-        Acceso accesoFinalizado = sistemaBarrio.registrarAcceso("Juan Torres", "38111222");
-        sistemaBarrio.registrarEgresoAcceso(accesoFinalizado);
-
-        actualizarTablasDesdeSistema();
     }
 
     public static void main(String[] args) {

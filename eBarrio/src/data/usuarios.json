@@ -1,0 +1,33 @@
+{
+  "usuarios": [
+    {
+      "email": "admin@ebarrio.com",
+      "password": "admin123",
+      "rol": "admin"
+    },
+    {
+      "email": "sofia@email.com",
+      "password": "sofia123",
+      "rol": "residente",
+      "residenteId": 1
+    },
+    {
+      "email": "martin@email.com",
+      "password": "martin123",
+      "rol": "residente",
+      "residenteId": 2
+    },
+    {
+      "email": "ana@email.com",
+      "password": "ana123",
+      "rol": "residente",
+      "residenteId": 3
+    },
+    {
+      "email": "facu@gmail.com",
+      "password": "12345678",
+      "rol": "residente",
+      "residenteId": 4
+    }
+  ]
+}
