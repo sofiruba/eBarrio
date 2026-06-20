@@ -11,7 +11,12 @@ Fase 2.
 
 ## Tareas pendientes para cerrar la entrega
 
-- Revisar que todos los integrantes tengan commits significativos.
 - Completar reflexion individual de cada integrante en el informe final.
-- Agregar capturas de la demo o de la interfaz cuando este lista.
+- Agregar capturas de la demo o de la interfaz.
+- Agregar logs de ejecucion de los escenarios de prueba.
+- Revisar y exportar UML final si la docente no acepta archivos PlantUML.
 - Confirmar que la docente tenga acceso al repositorio.
+
+El detalle del historial de commits queda documentado en
+`documentacion/commits_individuales.md`. Para evaluar participacion conviene mirar la
+responsabilidad por modulo junto con los commits, no solamente la cantidad bruta.

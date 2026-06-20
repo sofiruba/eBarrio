@@ -1,5 +1,8 @@
 package app;
 
+import app.views.AdministradorView;
+import app.views.LoginView;
+import app.views.ResidenteView;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -15,7 +18,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -61,7 +63,6 @@ public class MainApp extends Application {
     private final ObservableList<Acceso> accesos = FXCollections.observableArrayList();
 
     private BorderPane root;
-    private VBox sidebar;
     private Barrio barrioPrincipal;
     private ModoVista modoActual = ModoVista.ADMIN;
     private Residente residenteActual;
@@ -80,7 +81,7 @@ public class MainApp extends Application {
 
         root = new BorderPane();
         root.getStyleClass().add("root-layout");
-        root.setCenter(crearLogin());
+        root.setCenter(crearVistaLogin());
 
         Scene scene = new Scene(root, 1240, 760);
         cargarEstilos(scene);
@@ -97,33 +98,6 @@ public class MainApp extends Application {
         if (css != null) {
             scene.getStylesheets().add(css.toExternalForm());
         }
-    }
-
-    private HBox crearBarraSuperior() {
-        Label menu = new Label("eB");
-        menu.getStyleClass().add("top-icon");
-
-        Label marca = new Label("eBarrio");
-        marca.getStyleClass().add("top-brand");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Button alerta = new Button("Notificaciones: " + sistemaBarrio.getNotificaciones().size());
-        alerta.getStyleClass().add("top-pill");
-        alerta.setOnAction(e -> mostrarNotificaciones());
-
-        Label usuario = new Label(modoActual == ModoVista.ADMIN ? "Administrador" : nombreResidenteActual());
-        usuario.getStyleClass().add("top-user");
-
-        Button cerrarSesion = new Button("Cerrar sesion");
-        cerrarSesion.getStyleClass().add("view-switch");
-        cerrarSesion.setOnAction(e -> cerrarSesion());
-
-        HBox top = new HBox(14, menu, marca, spacer, alerta, usuario, cerrarSesion);
-        top.setAlignment(Pos.CENTER_LEFT);
-        top.getStyleClass().add("topbar");
-        return top;
     }
 
     private void mostrarNotificaciones() {
@@ -158,58 +132,34 @@ public class MainApp extends Application {
         dialog.showAndWait();
     }
 
-    private VBox crearMenuLateral() {
-        Label logoMark = new Label("eB");
-        logoMark.getStyleClass().add("logo-mark");
-
-        Label logo = new Label("eBarrio");
-        logo.getStyleClass().add("logo");
-
-        Label subtitulo = new Label("Gestion de barrios cerrados");
-        subtitulo.getStyleClass().add("subtitle");
-
-        Label modo = new Label(modoActual == ModoVista.ADMIN ? "Panel administrador" : "Panel residente");
-        modo.getStyleClass().add("menu-section");
-
-        sidebar = new VBox(10, logoMark, logo, subtitulo, modo);
-
-        if (modoActual == ModoVista.ADMIN) {
-            Button inicio = crearBotonMenu("Inicio");
-            Button residentesBtn = crearBotonMenu("Residentes");
-            Button accesosBtn = crearBotonMenu("Accesos");
-            Button reclamosBtn = crearBotonMenu("Solicitudes");
-
-            inicio.setOnAction(e -> mostrarInicio());
-            residentesBtn.setOnAction(e -> mostrarResidentes());
-            accesosBtn.setOnAction(e -> mostrarAccesos());
-            reclamosBtn.setOnAction(e -> mostrarSolicitudes());
-            sidebar.getChildren().addAll(inicio, residentesBtn, accesosBtn, reclamosBtn);
-        } else {
-            Button inicio = crearBotonMenu("Mi inicio");
-            Button visitantesBtn = crearBotonMenu("Mis visitantes");
-            Button reclamosBtn = crearBotonMenu("Mis reclamos");
-            Button nuevoReclamoBtn = crearBotonMenu("Nuevo reclamo");
-
-            inicio.setOnAction(e -> mostrarInicioResidente());
-            visitantesBtn.setOnAction(e -> mostrarMisVisitantes());
-            reclamosBtn.setOnAction(e -> mostrarMisSolicitudes());
-            nuevoReclamoBtn.setOnAction(e -> mostrarFormularioCrearReclamo());
-            sidebar.getChildren().addAll(inicio, visitantesBtn, reclamosBtn, nuevoReclamoBtn);
-        }
-
-        sidebar.getStyleClass().add("sidebar");
-        sidebar.setPadding(new Insets(26, 18, 26, 18));
-        sidebar.setPrefWidth(235);
-        return sidebar;
-    }
-
     private void abrirAppSegunSesion() {
-        root.setLeft(crearMenuLateral());
-        root.setTop(crearBarraSuperior());
         if (modoActual == ModoVista.ADMIN) {
+            AdministradorView vista = new AdministradorView(
+                    sistemaBarrio.getNotificaciones().size(),
+                    this::mostrarNotificaciones,
+                    this::cerrarSesion,
+                    this::mostrarInicio,
+                    this::mostrarResidentes,
+                    this::mostrarAccesos,
+                    this::mostrarSolicitudes
+            );
+            root.setLeft(vista.crearMenuLateral());
+            root.setTop(vista.crearBarraSuperior());
             mostrarInicio();
         } else {
             asegurarResidenteActual();
+            ResidenteView vista = new ResidenteView(
+                    nombreResidenteActual(),
+                    sistemaBarrio.getNotificaciones().size(),
+                    this::mostrarNotificaciones,
+                    this::cerrarSesion,
+                    this::mostrarInicioResidente,
+                    this::mostrarMisVisitantes,
+                    this::mostrarMisSolicitudes,
+                    this::mostrarFormularioCrearReclamo
+            );
+            root.setLeft(vista.crearMenuLateral());
+            root.setTop(vista.crearBarraSuperior());
             mostrarInicioResidente();
         }
     }
@@ -220,37 +170,11 @@ public class MainApp extends Application {
         residenteActual = null;
         root.setTop(null);
         root.setLeft(null);
-        root.setCenter(crearLogin());
+        root.setCenter(crearVistaLogin());
     }
 
-    private VBox crearLogin() {
-        Label marca = new Label("eBarrio");
-        marca.getStyleClass().add("login-brand");
-
-        Label titulo = new Label("Iniciar sesion");
-        titulo.getStyleClass().add("login-title");
-
-        TextField email = campo("Email");
-        PasswordField password = new PasswordField();
-        password.setPromptText("Clave");
-        password.getStyleClass().add("text-field");
-        password.setPrefWidth(360);
-
-        Label ayuda = new Label("Ingresa con tu email y clave para continuar");
-        ayuda.getStyleClass().add("login-help");
-
-        Button ingresar = crearBotonPrimario("Ingresar", () -> intentarLogin(email.getText(), password.getText()));
-        ingresar.setMaxWidth(Double.MAX_VALUE);
-
-        VBox form = new VBox(14, marca, titulo, email, password, ingresar, ayuda);
-        form.getStyleClass().add("login-card");
-        form.setAlignment(Pos.CENTER_LEFT);
-        form.setMaxWidth(430);
-
-        VBox wrapper = new VBox(form);
-        wrapper.getStyleClass().add("login-page");
-        wrapper.setAlignment(Pos.CENTER);
-        return wrapper;
+    private VBox crearVistaLogin() {
+        return new LoginView(this::intentarLogin).crear();
     }
 
     private void intentarLogin(String email, String password) {
@@ -268,13 +192,6 @@ public class MainApp extends Application {
         }
 
         mostrarAlerta("Datos incorrectos", "Ingresa bien el email y la clave para continuar.");
-    }
-
-    private Button crearBotonMenu(String texto) {
-        Button boton = new Button(texto);
-        boton.getStyleClass().add("menu-button");
-        boton.setMaxWidth(Double.MAX_VALUE);
-        return boton;
     }
 
     private void mostrarInicio() {
@@ -1236,9 +1153,34 @@ public class MainApp extends Application {
         solicitudes.setAll(sistemaBarrio.getSolicitudes());
         accesos.setAll(sistemaBarrio.getAccesos());
 
-        if (root != null) {
-            root.setTop(crearBarraSuperior());
+        if (root != null && usuarioActual != null) {
+            root.setTop(crearBarraSuperiorSesion());
         }
+    }
+
+    private HBox crearBarraSuperiorSesion() {
+        if (modoActual == ModoVista.ADMIN) {
+            return new AdministradorView(
+                    sistemaBarrio.getNotificaciones().size(),
+                    this::mostrarNotificaciones,
+                    this::cerrarSesion,
+                    this::mostrarInicio,
+                    this::mostrarResidentes,
+                    this::mostrarAccesos,
+                    this::mostrarSolicitudes
+            ).crearBarraSuperior();
+        }
+
+        return new ResidenteView(
+                nombreResidenteActual(),
+                sistemaBarrio.getNotificaciones().size(),
+                this::mostrarNotificaciones,
+                this::cerrarSesion,
+                this::mostrarInicioResidente,
+                this::mostrarMisVisitantes,
+                this::mostrarMisSolicitudes,
+                this::mostrarFormularioCrearReclamo
+        ).crearBarraSuperior();
     }
 
     private Dialog<ButtonType> crearDialogo(String titulo, String header) {
