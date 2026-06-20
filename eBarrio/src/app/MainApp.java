@@ -36,6 +36,7 @@ import model.accesos.Visitante;
 import model.barrio.Barrio;
 import model.barrio.Residente;
 import model.barrio.Vivienda;
+import model.notificaciones.Notificacion;
 import model.solicitud.Solicitud;
 import sistema.SistemaBarrio;
 
@@ -108,8 +109,9 @@ public class MainApp extends Application {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label alerta = new Label("Notificaciones: " + sistemaBarrio.getNotificaciones().size());
+        Button alerta = new Button("Notificaciones: " + sistemaBarrio.getNotificaciones().size());
         alerta.getStyleClass().add("top-pill");
+        alerta.setOnAction(e -> mostrarNotificaciones());
 
         Label usuario = new Label(modoActual == ModoVista.ADMIN ? "Administrador" : nombreResidenteActual());
         usuario.getStyleClass().add("top-user");
@@ -122,6 +124,38 @@ public class MainApp extends Application {
         top.setAlignment(Pos.CENTER_LEFT);
         top.getStyleClass().add("topbar");
         return top;
+    }
+
+    private void mostrarNotificaciones() {
+        Dialog<ButtonType> dialog = crearDialogo("Notificaciones", "Novedades generadas por el sistema");
+
+        TableView<Notificacion> tabla = new TableView<>();
+        tabla.setItems(FXCollections.observableArrayList(sistemaBarrio.getNotificaciones()));
+        tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Notificacion, String> colFecha = new TableColumn<>("Fecha");
+        colFecha.setCellValueFactory(data -> new ReadOnlyStringWrapper(formatearFechaHora(data.getValue().getFecha())));
+        colFecha.setMinWidth(150);
+
+        TableColumn<Notificacion, String> colDestino = new TableColumn<>("Destino");
+        colDestino.setCellValueFactory(new PropertyValueFactory<>("destinatario"));
+        colDestino.setMinWidth(120);
+
+        TableColumn<Notificacion, String> colMensaje = new TableColumn<>("Mensaje");
+        colMensaje.setCellValueFactory(new PropertyValueFactory<>("mensaje"));
+        colMensaje.setMinWidth(380);
+
+        tabla.getColumns().add(colFecha);
+        tabla.getColumns().add(colDestino);
+        tabla.getColumns().add(colMensaje);
+        configurarTabla(tabla);
+        tabla.setPrefHeight(360);
+
+        VBox contenido = new VBox(12, tabla);
+        contenido.setPadding(new Insets(12));
+        dialog.getDialogPane().setContent(contenido);
+        dialog.getDialogPane().setPrefWidth(760);
+        dialog.showAndWait();
     }
 
     private VBox crearMenuLateral() {
@@ -776,14 +810,14 @@ public class MainApp extends Application {
 
         TextField nombre = campo("Nombre del visitante");
         TextField dni = campo("DNI");
-        TextField patente = campo("Patente");
+        TextField patente = campo("Patente opcional");
         TextField motivo = campo("Motivo de visita");
         CheckBox registrarAccesoAhora = new CheckBox("Desea registrar acceso ahora");
 
         GridPane grid = crearGridFormulario();
         agregarFila(grid, 0, "Nombre", nombre);
         agregarFila(grid, 1, "DNI", dni);
-        agregarFila(grid, 2, "Patente", patente);
+        agregarFila(grid, 2, "Patente opcional", patente);
         agregarFila(grid, 3, "Motivo", motivo);
         agregarFila(grid, 4, "Ingreso", registrarAccesoAhora);
 

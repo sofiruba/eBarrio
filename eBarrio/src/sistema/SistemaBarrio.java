@@ -71,6 +71,7 @@ public class SistemaBarrio {
     private List<Administrador> administradores;
     private List<UsuarioSistema> usuarios;
     private boolean persistenciaActiva = true;
+    private boolean emitirNotificaciones = true;
 
     // Contadores de IDs
     private int contadorBarrios = 1;
@@ -394,10 +395,15 @@ public class SistemaBarrio {
     // ─────────────────────────────────────────────
 
     public Notificacion notificar(String mensaje, String destinatario) {
+        if (!emitirNotificaciones) {
+            return null;
+        }
+
         Notificacion notificacion = new Notificacion(contadorNotificaciones++, mensaje, destinatario);
         notificacion.enviar();
 
         notificaciones.add(notificacion);
+        guardarDatosSiCorresponde();
 
         return notificacion;
     }
@@ -408,7 +414,9 @@ public class SistemaBarrio {
 
     public void cargarDesdeJson() {
         persistenciaActiva = false;
+        emitirNotificaciones = false;
         cargarDatosDesdeJson();
+        emitirNotificaciones = true;
         cargarUsuariosDesdeJson();
         persistenciaActiva = true;
     }
@@ -497,6 +505,8 @@ public class SistemaBarrio {
         agregarSolicitudesJson(json);
         json.append(",\n");
         agregarAccesosJson(json);
+        json.append(",\n");
+        agregarNotificacionesJson(json);
         json.append("\n}\n");
         escribirArchivoJson("datos.json", json.toString());
     }
@@ -578,6 +588,19 @@ public class SistemaBarrio {
             } else if (extraerBooleanoJson(accesoJson, "finalizado")) {
                 registrarEgresoAcceso(acceso);
             }
+        }
+
+        for (String notificacionJson : extraerObjetosJson(json, "notificaciones")) {
+            Notificacion notificacion = new Notificacion(
+                    Integer.parseInt(extraerCampoJson(notificacionJson, "id")),
+                    extraerCampoJson(notificacionJson, "mensaje"),
+                    extraerCampoJson(notificacionJson, "destinatario")
+            );
+            String fecha = extraerCampoJson(notificacionJson, "fecha");
+            if (fecha != null && !fecha.isBlank()) {
+                notificacion.setFecha(LocalDateTime.parse(fecha));
+            }
+            notificaciones.add(notificacion);
         }
     }
 
@@ -846,6 +869,20 @@ public class SistemaBarrio {
             json.append("      \"fechaEgreso\": \"").append(acceso.getFechaEgreso() == null ? "" : acceso.getFechaEgreso()).append("\",\n");
             json.append("      \"finalizado\": ").append(!acceso.estaActivo()).append("\n");
             json.append("    }").append(i == accesos.size() - 1 ? "\n" : ",\n");
+        }
+        json.append("  ]");
+    }
+
+    private void agregarNotificacionesJson(StringBuilder json) {
+        json.append("  \"notificaciones\": [\n");
+        for (int i = 0; i < notificaciones.size(); i++) {
+            Notificacion notificacion = notificaciones.get(i);
+            json.append("    {\n");
+            json.append("      \"id\": ").append(notificacion.getId()).append(",\n");
+            json.append("      \"mensaje\": \"").append(escaparJson(notificacion.getMensaje())).append("\",\n");
+            json.append("      \"destinatario\": \"").append(escaparJson(notificacion.getDestinatario())).append("\",\n");
+            json.append("      \"fecha\": \"").append(notificacion.getFecha() == null ? "" : notificacion.getFecha()).append("\"\n");
+            json.append("    }").append(i == notificaciones.size() - 1 ? "\n" : ",\n");
         }
         json.append("  ]");
     }

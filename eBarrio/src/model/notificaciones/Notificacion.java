@@ -27,6 +27,7 @@ public class Notificacion {
     public String getMensaje() { return mensaje; }
     public LocalDateTime getFecha() { return fecha; }
     public String getDestinatario() { return destinatario; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
 
     @Override
     public String toString() {

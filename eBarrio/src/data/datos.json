@@ -105,6 +105,14 @@
       "dni": "77777777",
       "patente": "AB123CD",
       "motivoVisita": "Amistad y amor"
+    },
+    {
+      "id": 5,
+      "residenteId": 4,
+      "nombre": "marco teves",
+      "dni": "12121212",
+      "patente": "ab123ab",
+      "motivoVisita": "Amigoo"
     }
   ],
   "solicitudes": [
@@ -133,7 +141,7 @@
       "descripcion": "Cortar pasto del parque central",
       "prioridad": "Media",
       "detalle": "Parque central",
-      "estado": "Pendiente"
+      "estado": "Resuelto"
     },
     {
       "id": 4,
@@ -142,7 +150,16 @@
       "descripcion": "Persona no identificada en el perimetro",
       "prioridad": "Alta",
       "detalle": "Alto",
-      "estado": "Pendiente"
+      "estado": "En proceso"
+    },
+    {
+      "id": 5,
+      "tipo": "reclamo",
+      "nombre": "Facundo Etchart",
+      "descripcion": "no estan cortando el pasto por mi zona y tengo riesgo de dengue",
+      "prioridad": "Alta",
+      "detalle": "Enfermedad",
+      "estado": "En proceso"
     }
   ],
   "accesos": [
@@ -170,5 +187,7 @@
       "fechaEgreso": "2026-06-20T00:35:57.680605",
       "finalizado": true
     }
+  ],
+  "notificaciones": [
   ]
 }

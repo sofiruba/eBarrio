@@ -31,6 +31,12 @@
     -fx-background-radius: 999;
     -fx-text-fill: #F7F5EF;
     -fx-padding: 7 13;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+}
+
+.top-pill:hover {
+    -fx-background-color: rgba(247,245,239,0.18);
 }
 
 .resident-selector {
