@@ -1,33 +1,33 @@
 # eBarrio
 
-Sistema de gestion operativa para un barrio cerrado. El proyecto permite administrar
+Sistema de gestión operativa para un barrio cerrado. El proyecto permite administrar
 residentes, viviendas, visitantes, accesos, reclamos, tareas de mantenimiento,
 incidentes de seguridad, usuarios y notificaciones.
 
 ## Integrantes
 
-- Ignacio Cortes - 1203485
+- Ignacio Cortés - 1203485
 - Facundo Etchart - 1201391
-- Sofia Rubachin - 1196599
+- Sofía Rubachín - 1196599
 
 ## Problema abordado
 
-En un barrio cerrado se necesita centralizar informacion que normalmente queda
-dispersa entre administracion, seguridad, mantenimiento y residentes. eBarrio resuelve
-ese problema con una aplicacion Java que registra personas y viviendas, autoriza
+En un barrio cerrado se necesita centralizar información que normalmente queda
+dispersa entre administración, seguridad, mantenimiento y residentes. eBarrio resuelve
+ese problema con una aplicación Java que registra personas y viviendas, autoriza
 visitantes o proveedores, controla ingresos y egresos, y permite hacer seguimiento de
 solicitudes operativas hasta su cierre.
 
 ## Funcionalidades implementadas
 
 - Login con usuarios administradores y residentes.
-- Alta, edicion y consulta de residentes.
-- Registro de viviendas y asociacion de residentes a una vivienda.
-- Autorizacion de visitantes y proveedores por residente.
+- Alta, edición (incluye baja) y consulta de residentes.
+- Registro de viviendas y asociación de residentes a una vivienda.
+- Autorización de visitantes y proveedores por residente.
 - Registro de ingresos y egresos de visitantes.
-- Creacion de reclamos, tareas de mantenimiento e incidentes de seguridad.
+- Creación de reclamos, tareas de mantenimiento e incidentes de seguridad.
 - Seguimiento de solicitudes por estados: Pendiente, Asignado, En proceso, Resuelto y Cerrado.
-- Cancelacion de solicitudes desde estados intermedios.
+- Cancelación de solicitudes desde estados intermedios.
 - Notificaciones ante eventos relevantes del sistema.
 - Persistencia simple en archivos JSON dentro de `src/data`.
 - Interfaz JavaFX con vistas diferenciadas para login, administrador y residente.
@@ -69,11 +69,11 @@ documentacion/
 - **Controlador/fachada:** `sistema.SistemaBarrio` concentra los casos de uso que usa la
   interfaz y las pruebas.
 - **Datos:** `src/data/datos.json` y `src/data/usuarios.json` conservan datos de prueba y
-  cambios realizados desde la aplicacion.
+  cambios realizados desde la aplicación.
 
 ## Patrones de diseno
 
-- **Factory Method / Simple Factory:** `SolicitudFactory` centraliza la creacion de
+- **Factory Method / Simple Factory:** `SolicitudFactory` centraliza la creación de
   `Reclamo`, `TareaMantenimiento` e `IncidenteSeguridad`.
 - **Facade:** `SistemaBarrio` ofrece una interfaz unificada para registrar personas,
   accesos, solicitudes, usuarios, notificaciones y persistencia.
@@ -88,7 +88,7 @@ documentacion/
   `Notificacion` representa mensajes, los estados gestionan transiciones y `SistemaBarrio`
   coordina casos de uso.
 - **OCP/LSP:** nuevas solicitudes pueden agregarse extendiendo `Solicitud` y usando la
-  fabrica sin romper el uso polimorfico existente.
+  fábrica sin romper el uso polimórfico existente.
 - **ISP/DIP:** `Solicitud` depende de `IObservador` en vez de una clase concreta.
 - **GRASP Creator:** `SolicitudFactory` crea solicitudes y `SistemaBarrio` crea entidades
   del flujo.
@@ -96,18 +96,18 @@ documentacion/
 - **GRASP Information Expert:** clases como `Acceso`, `Vivienda`, `Residente` y los estados
   resuelven comportamientos asociados a sus propios datos.
 - **GRASP Low Coupling / High Cohesion:** paquetes por responsabilidad y acceso a los casos
-  de uso a traves de la fachada.
+  de uso a través de la fachada.
 
 ## Repositorio
 
 https://github.com/sofiruba/eBarrio
 
-## Como ejecutar
+## Cómo ejecutar
 
 La forma recomendada para la defensa es abrir el proyecto en IntelliJ IDEA y ejecutar
 `app.MainApp` con JavaFX configurado.
 
-Tambien se puede compilar y ejecutar por consola desde la raiz del repositorio:
+Tambien se puede compilar y ejecutar por consola desde la raíz del repositorio:
 
 ```bash
 javac --module-path eBarrio/libs/javafx-sdk-17.0.19/lib --add-modules javafx.controls -encoding UTF-8 -d out $(find eBarrio/src -name '*.java')
@@ -124,7 +124,7 @@ java -cp out model.solicitud.test.EscenariosEjecucion
 
 ## Usuarios de prueba
 
-Los usuarios estan en `eBarrio/src/data/usuarios.json`. Ejemplos:
+Los usuarios están en `eBarrio/src/data/usuarios.json`. Ejemplos:
 
 - Administrador: `admin@ebarrio.com` / `admin123`
 - Residente: `sofia@email.com` / `sofia123`
@@ -134,7 +134,7 @@ Los usuarios estan en `eBarrio/src/data/usuarios.json`. Ejemplos:
 
 ## Estado para entrega
 
-El codigo implementa los flujos principales y alternativos requeridos. La documentacion
+El código implementa los flujos principales y alternativos requeridos. La documentación
 final se encuentra en `documentacion/informe_final.md`, el checklist de consigna en
 `documentacion/cumplimiento.md`, los escenarios en `documentacion/escenarios_de_prueba.md`
 y los diagramas UML en `documentacion/uml`.
