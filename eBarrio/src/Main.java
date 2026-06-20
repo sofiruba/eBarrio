@@ -22,7 +22,7 @@ public class Main {
         sistema.listarAccesos();
 
         System.out.println("============================================");
-        System.out.println("       Datos leidos desde src/data/*.json    ");
+        System.out.println("     Datos leidos desde la base de datos    ");
         System.out.println("============================================");
     }
 }

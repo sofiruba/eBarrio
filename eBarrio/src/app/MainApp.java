@@ -25,6 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -40,6 +41,10 @@ import model.barrio.Residente;
 import model.barrio.Vivienda;
 import model.notificaciones.Notificacion;
 import model.solicitud.Solicitud;
+import model.solicitud.personal.IncidenteSeguridad;
+import model.solicitud.personal.PersonalMantenimiento;
+import model.solicitud.personal.PersonalSeguridad;
+import model.solicitud.personal.TareaMantenimiento;
 import sistema.SistemaBarrio;
 
 import java.net.URL;
@@ -61,6 +66,8 @@ public class MainApp extends Application {
     private final ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
     private final ObservableList<Solicitud> solicitudes = FXCollections.observableArrayList();
     private final ObservableList<Acceso> accesos = FXCollections.observableArrayList();
+    private final PersonalSeguridad personalSeguridad = new PersonalSeguridad(1, "Equipo de seguridad", "Turno actual");
+    private final PersonalMantenimiento personalMantenimiento = new PersonalMantenimiento(1, "Equipo de mantenimiento", "Areas comunes");
 
     private BorderPane root;
     private Barrio barrioPrincipal;
@@ -83,12 +90,12 @@ public class MainApp extends Application {
         root.getStyleClass().add("root-layout");
         root.setCenter(crearVistaLogin());
 
-        Scene scene = new Scene(root, 1240, 760);
+        Scene scene = new Scene(root, 1180, 720);
         cargarEstilos(scene);
 
         stage.setTitle("eBarrio - Gestion de Barrios Cerrados");
-        stage.setMinWidth(1120);
-        stage.setMinHeight(700);
+        stage.setMinWidth(900);
+        stage.setMinHeight(560);
         stage.setScene(scene);
         stage.show();
     }
@@ -104,7 +111,7 @@ public class MainApp extends Application {
         Dialog<ButtonType> dialog = crearDialogo("Notificaciones", "Novedades generadas por el sistema");
 
         TableView<Notificacion> tabla = new TableView<>();
-        tabla.setItems(FXCollections.observableArrayList(sistemaBarrio.getNotificaciones()));
+        tabla.setItems(FXCollections.observableArrayList(notificacionesVisibles()));
         tabla.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Notificacion, String> colFecha = new TableColumn<>("Fecha");
@@ -135,13 +142,15 @@ public class MainApp extends Application {
     private void abrirAppSegunSesion() {
         if (modoActual == ModoVista.ADMIN) {
             AdministradorView vista = new AdministradorView(
-                    sistemaBarrio.getNotificaciones().size(),
+                    notificacionesVisibles().size(),
                     this::mostrarNotificaciones,
                     this::cerrarSesion,
                     this::mostrarInicio,
                     this::mostrarResidentes,
                     this::mostrarAccesos,
-                    this::mostrarSolicitudes
+                    this::mostrarSolicitudes,
+                    this::mostrarSeguridad,
+                    this::mostrarMantenimiento
             );
             root.setLeft(vista.crearMenuLateral());
             root.setTop(vista.crearBarraSuperior());
@@ -150,7 +159,7 @@ public class MainApp extends Application {
             asegurarResidenteActual();
             ResidenteView vista = new ResidenteView(
                     nombreResidenteActual(),
-                    sistemaBarrio.getNotificaciones().size(),
+                    notificacionesVisibles().size(),
                     this::mostrarNotificaciones,
                     this::cerrarSesion,
                     this::mostrarInicioResidente,
@@ -232,7 +241,7 @@ public class MainApp extends Application {
                 crearMetrica("Vivienda", vivienda == null ? "S/D" : vivienda.getLote()),
                 crearMetrica("Visitantes", String.valueOf(residenteActual.getVisitantes().size())),
                 crearMetrica("Mis reclamos", String.valueOf(contarSolicitudesDelResidente())),
-                crearMetrica("Notificaciones", String.valueOf(sistemaBarrio.getNotificaciones().size()))
+                crearMetrica("Notificaciones", String.valueOf(notificacionesVisibles().size()))
         );
         metricas.getStyleClass().add("metric-row");
 
@@ -260,8 +269,7 @@ public class MainApp extends Application {
         Button nuevoVisitante = crearBotonPrimario("Autorizar visitante", this::mostrarFormularioRegistrarVisitante);
         Button nuevoReclamo = crearBotonSecundario("Crear reclamo", this::mostrarFormularioCrearReclamo);
         Button verReclamos = crearBotonSecundario("Ver mis reclamos", this::mostrarMisSolicitudes);
-        HBox acciones = new HBox(10, nuevoVisitante, nuevoReclamo, verReclamos);
-        acciones.setAlignment(Pos.CENTER_LEFT);
+        FlowPane acciones = crearFilaAcciones(nuevoVisitante, nuevoReclamo, verReclamos);
         VBox card = new VBox(14, crearTituloCard("Acciones rapidas"), acciones);
         card.getStyleClass().add("card");
         return card;
@@ -311,8 +319,7 @@ public class MainApp extends Application {
         tablaResidentes = crearTablaResidentes();
 
         VBox contenido = crearContenidoBase("Residentes", "Alta y consulta de residentes del barrio");
-        HBox acciones = new HBox(
-                10,
+        FlowPane acciones = crearFilaAcciones(
                 crearBotonPrimario("Nuevo residente", this::mostrarFormularioAgregarResidente),
                 crearBotonSecundario("Editar residente", this::mostrarFormularioEditarResidente)
         );
@@ -331,8 +338,7 @@ public class MainApp extends Application {
         filtroTipo.setOnAction(e -> aplicarFiltroAutorizados(filtroTipo.getValue()));
         HBox filtroAutorizados = new HBox(10, new Label("Ver"), filtroTipo);
         filtroAutorizados.setAlignment(Pos.CENTER_LEFT);
-        HBox acciones = new HBox(
-                10,
+        FlowPane acciones = crearFilaAcciones(
                 crearBotonPrimario("Autorizar visitante/proveedor", this::mostrarFormularioRegistrarVisitante),
                 crearBotonSecundario("Editar", this::mostrarFormularioEditarVisitante),
                 crearBotonSecundario("Eliminar", this::eliminarVisitanteSeleccionado)
@@ -352,14 +358,12 @@ public class MainApp extends Application {
         filtroTipo.setOnAction(e -> aplicarFiltroAutorizados(filtroTipo.getValue()));
         HBox filtroAutorizados = new HBox(10, new Label("Ver"), filtroTipo);
         filtroAutorizados.setAlignment(Pos.CENTER_LEFT);
-        HBox accionesVisitantes = new HBox(
-                10,
+        FlowPane accionesVisitantes = crearFilaAcciones(
                 crearBotonPrimario("Nuevo visitante/proveedor", this::mostrarFormularioRegistrarVisitante),
                 crearBotonSecundario("Editar", this::mostrarFormularioEditarVisitante),
                 crearBotonSecundario("Eliminar", this::eliminarVisitanteSeleccionado)
         );
-        HBox accionesAccesos = new HBox(
-                10,
+        FlowPane accionesAccesos = crearFilaAcciones(
                 crearBotonPrimario("Registrar ingreso", this::registrarAccesoVisitanteSeleccionado),
                 crearBotonSecundario("Registrar egreso", this::registrarEgresoAccesoSeleccionado)
         );
@@ -400,8 +404,7 @@ public class MainApp extends Application {
         tablaSolicitudes = crearTablaSolicitudes();
 
         VBox contenido = crearContenidoBase("Solicitudes", "Reclamos, tareas e incidentes");
-        HBox acciones = new HBox(
-                10,
+        FlowPane acciones = crearFilaAcciones(
                 crearBotonPrimario("Nuevo reclamo", this::mostrarFormularioCrearReclamo),
                 crearBotonSecundario("Nueva tarea", this::mostrarFormularioCrearTarea),
                 crearBotonSecundario("Nuevo incidente", this::mostrarFormularioCrearIncidente),
@@ -412,15 +415,63 @@ public class MainApp extends Application {
         root.setCenter(crearScroll(contenido));
     }
 
+    private void mostrarSeguridad() {
+        actualizarTablasDesdeSistema();
+        tablaVisitantes = crearTablaVisitantes();
+        tablaAccesos = crearTablaAccesos();
+        tablaSolicitudes = crearTablaSolicitudes();
+        solicitudes.setAll(solicitudesDeTipo(IncidenteSeguridad.class));
+
+        VBox contenido = crearContenidoBase("Seguridad", personalSeguridad.getNombre() + " - " + personalSeguridad.getTurno());
+        FlowPane acciones = crearFilaAcciones(
+                crearBotonPrimario("Registrar ingreso", this::registrarAccesoVisitanteSeleccionado),
+                crearBotonSecundario("Registrar egreso", this::registrarEgresoAccesoSeleccionado),
+                crearBotonSecundario("Reportar incidente", this::mostrarFormularioCrearIncidente)
+        );
+
+        contenido.getChildren().addAll(
+                acciones,
+                crearCard("Visitantes autorizados", tablaVisitantes),
+                crearCard("Ingresos y egresos", tablaAccesos),
+                crearCard("Incidentes reportados", tablaSolicitudes)
+        );
+        root.setCenter(crearScroll(contenido));
+    }
+
+    private void mostrarMantenimiento() {
+        actualizarTablasDesdeSistema();
+        tablaSolicitudes = crearTablaSolicitudes();
+        solicitudes.setAll(solicitudesDeTipo(TareaMantenimiento.class));
+
+        VBox contenido = crearContenidoBase("Mantenimiento", personalMantenimiento.getNombre() + " - " + personalMantenimiento.getSector());
+        FlowPane acciones = crearFilaAcciones(
+                crearBotonPrimario("Nueva tarea", this::mostrarFormularioCrearTarea),
+                crearBotonSecundario("Avanzar tarea", this::avanzarTareaMantenimientoSeleccionada)
+        );
+
+        contenido.getChildren().addAll(acciones, crearCard("Tareas de mantenimiento", tablaSolicitudes));
+        root.setCenter(crearScroll(contenido));
+    }
+
     private void mostrarMisSolicitudes() {
         asegurarResidenteActual();
         tablaSolicitudes = crearTablaSolicitudes();
         solicitudes.setAll(solicitudesDelResidente());
 
         VBox contenido = crearContenidoBase("Mis reclamos", "Seguimiento de reclamos cargados por tu usuario");
-        HBox acciones = new HBox(10, crearBotonPrimario("Nuevo reclamo", this::mostrarFormularioCrearReclamo));
+        FlowPane acciones = crearFilaAcciones(crearBotonPrimario("Nuevo reclamo", this::mostrarFormularioCrearReclamo));
         contenido.getChildren().addAll(acciones, crearCard("Mis solicitudes", tablaSolicitudes));
         root.setCenter(crearScroll(contenido));
+    }
+
+    private ObservableList<Solicitud> solicitudesDeTipo(Class<? extends Solicitud> tipo) {
+        ObservableList<Solicitud> resultado = FXCollections.observableArrayList();
+        for (Solicitud solicitud : sistemaBarrio.getSolicitudes()) {
+            if (tipo.isInstance(solicitud)) {
+                resultado.add(solicitud);
+            }
+        }
+        return resultado;
     }
 
     private VBox crearContenidoBase(String titulo, String descripcion) {
@@ -509,6 +560,12 @@ public class MainApp extends Application {
         boton.getStyleClass().add("secondary-button");
         boton.setOnAction(e -> accion.run());
         return boton;
+    }
+
+    private FlowPane crearFilaAcciones(Node... acciones) {
+        FlowPane fila = new FlowPane(10, 10, acciones);
+        fila.setAlignment(Pos.CENTER_LEFT);
+        return fila;
     }
 
     private TableView<Residente> crearTablaResidentes() {
@@ -979,7 +1036,8 @@ public class MainApp extends Application {
                 return;
             }
 
-            sistemaBarrio.crearIncidenteSeguridad("Seguridad", descripcion.getText(), prioridad.getValue(), riesgo.getValue());
+            IncidenteSeguridad incidente = sistemaBarrio.crearIncidenteSeguridad("Seguridad", descripcion.getText(), prioridad.getValue(), riesgo.getValue());
+            personalSeguridad.reportarIncidente(incidente);
             actualizarYVolverASolicitudes();
         }
     }
@@ -1066,6 +1124,17 @@ public class MainApp extends Application {
 
         sistemaBarrio.avanzarEstadoSolicitud(solicitud);
         actualizarYVolverASolicitudes();
+    }
+
+    private void avanzarTareaMantenimientoSeleccionada() {
+        Solicitud solicitud = obtenerSolicitudSeleccionada();
+        if (!(solicitud instanceof TareaMantenimiento)) {
+            mostrarAlerta("Elegir tarea", "Selecciona una tarea de mantenimiento para avanzar su estado.");
+            return;
+        }
+
+        sistemaBarrio.avanzarTareaMantenimiento(personalMantenimiento, (TareaMantenimiento) solicitud);
+        mostrarMantenimiento();
     }
 
     private void cancelarSolicitudSeleccionada() {
@@ -1161,19 +1230,21 @@ public class MainApp extends Application {
     private HBox crearBarraSuperiorSesion() {
         if (modoActual == ModoVista.ADMIN) {
             return new AdministradorView(
-                    sistemaBarrio.getNotificaciones().size(),
+                    notificacionesVisibles().size(),
                     this::mostrarNotificaciones,
                     this::cerrarSesion,
                     this::mostrarInicio,
                     this::mostrarResidentes,
                     this::mostrarAccesos,
-                    this::mostrarSolicitudes
+                    this::mostrarSolicitudes,
+                    this::mostrarSeguridad,
+                    this::mostrarMantenimiento
             ).crearBarraSuperior();
         }
 
         return new ResidenteView(
                 nombreResidenteActual(),
-                sistemaBarrio.getNotificaciones().size(),
+                notificacionesVisibles().size(),
                 this::mostrarNotificaciones,
                 this::cerrarSesion,
                 this::mostrarInicioResidente,
@@ -1297,6 +1368,26 @@ public class MainApp extends Application {
         for (Solicitud solicitud : sistemaBarrio.getSolicitudes()) {
             if (nombreCompleto.equalsIgnoreCase(solicitud.getNombre())) {
                 resultado.add(solicitud);
+            }
+        }
+        return resultado;
+    }
+
+    private ObservableList<Notificacion> notificacionesVisibles() {
+        ObservableList<Notificacion> resultado = FXCollections.observableArrayList();
+        if (modoActual == ModoVista.ADMIN) {
+            resultado.addAll(sistemaBarrio.getNotificaciones());
+            return resultado;
+        }
+
+        String nombre = nombreResidenteActual();
+        String email = usuarioActual == null ? "" : usuarioActual.getEmail();
+        for (Notificacion notificacion : sistemaBarrio.getNotificaciones()) {
+            String destinatario = notificacion.getDestinatario();
+            if ("Residente".equalsIgnoreCase(destinatario)
+                    || nombre.equalsIgnoreCase(destinatario)
+                    || email.equalsIgnoreCase(destinatario)) {
+                resultado.add(notificacion);
             }
         }
         return resultado;

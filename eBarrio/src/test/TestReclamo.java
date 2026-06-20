@@ -1,4 +1,4 @@
-package model.solicitud.test;
+package test;
 
 import model.solicitud.reclamo.Reclamo;
 import model.solicitud.Solicitud;

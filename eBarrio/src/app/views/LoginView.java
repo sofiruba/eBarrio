@@ -1,5 +1,8 @@
 package app.views;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.BiConsumer;
 
 import javafx.geometry.Pos;
@@ -7,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
 public class LoginView {
@@ -51,4 +56,5 @@ public class LoginView {
         wrapper.setAlignment(Pos.CENTER);
         return wrapper;
     }
+
 }

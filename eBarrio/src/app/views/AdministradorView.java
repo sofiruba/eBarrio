@@ -1,9 +1,15 @@
 package app.views;
 
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -18,6 +24,8 @@ public class AdministradorView {
     private final Runnable mostrarResidentes;
     private final Runnable mostrarAccesos;
     private final Runnable mostrarSolicitudes;
+    private final Runnable mostrarSeguridad;
+    private final Runnable mostrarMantenimiento;
 
     public AdministradorView(
             int cantidadNotificaciones,
@@ -26,7 +34,9 @@ public class AdministradorView {
             Runnable mostrarInicio,
             Runnable mostrarResidentes,
             Runnable mostrarAccesos,
-            Runnable mostrarSolicitudes
+            Runnable mostrarSolicitudes,
+            Runnable mostrarSeguridad,
+            Runnable mostrarMantenimiento
     ) {
         this.cantidadNotificaciones = cantidadNotificaciones;
         this.mostrarNotificaciones = mostrarNotificaciones;
@@ -35,6 +45,8 @@ public class AdministradorView {
         this.mostrarResidentes = mostrarResidentes;
         this.mostrarAccesos = mostrarAccesos;
         this.mostrarSolicitudes = mostrarSolicitudes;
+        this.mostrarSeguridad = mostrarSeguridad;
+        this.mostrarMantenimiento = mostrarMantenimiento;
     }
 
     public HBox crearBarraSuperior() {
@@ -48,18 +60,21 @@ public class AdministradorView {
         Button residentes = crearBotonMenu("Residentes");
         Button accesos = crearBotonMenu("Accesos");
         Button solicitudes = crearBotonMenu("Solicitudes");
+        Button seguridad = crearBotonMenu("Seguridad");
+        Button mantenimiento = crearBotonMenu("Mantenimiento");
 
         inicio.setOnAction(e -> mostrarInicio.run());
         residentes.setOnAction(e -> mostrarResidentes.run());
         accesos.setOnAction(e -> mostrarAccesos.run());
         solicitudes.setOnAction(e -> mostrarSolicitudes.run());
-        sidebar.getChildren().addAll(inicio, residentes, accesos, solicitudes);
+        seguridad.setOnAction(e -> mostrarSeguridad.run());
+        mantenimiento.setOnAction(e -> mostrarMantenimiento.run());
+        sidebar.getChildren().addAll(inicio, residentes, accesos, solicitudes, seguridad, mantenimiento);
         return sidebar;
     }
 
     static HBox crearBarraSuperior(String usuario, int cantidadNotificaciones, Runnable mostrarNotificaciones, Runnable cerrarSesion) {
-        Label menu = new Label("eB");
-        menu.getStyleClass().add("top-icon");
+        ImageView menu = crearLogo(38, 38, "top-logo");
 
         Label marca = new Label("eBarrio");
         marca.getStyleClass().add("top-brand");
@@ -78,30 +93,43 @@ public class AdministradorView {
         cerrarSesionBtn.getStyleClass().add("view-switch");
         cerrarSesionBtn.setOnAction(e -> cerrarSesion.run());
 
-        HBox top = new HBox(14, menu, marca, spacer, alerta, usuarioLabel, cerrarSesionBtn);
+        HBox top = new HBox(12, menu, marca, spacer, alerta, usuarioLabel, cerrarSesionBtn);
         top.setAlignment(Pos.CENTER_LEFT);
         top.getStyleClass().add("topbar");
         return top;
     }
 
     static VBox crearBaseMenu(String modo) {
-        Label logoMark = new Label("eB");
-        logoMark.getStyleClass().add("logo-mark");
-
-        Label logo = new Label("eBarrio");
-        logo.getStyleClass().add("logo");
-
-        Label subtitulo = new Label("Gestion de barrios cerrados");
-        subtitulo.getStyleClass().add("subtitle");
+        ImageView logo = crearLogo(170, 132, "sidebar-logo");
 
         Label modoLabel = new Label(modo);
         modoLabel.getStyleClass().add("menu-section");
 
-        VBox sidebar = new VBox(10, logoMark, logo, subtitulo, modoLabel);
+        VBox sidebar = new VBox(12, logo, modoLabel);
         sidebar.getStyleClass().add("sidebar");
-        sidebar.setPadding(new Insets(26, 18, 26, 18));
-        sidebar.setPrefWidth(235);
+        sidebar.setPadding(new Insets(22, 14, 22, 14));
+        sidebar.setPrefWidth(210);
         return sidebar;
+    }
+
+    private static ImageView crearLogo(double ancho, double alto, String estilo) {
+        ImageView logo = new ImageView(new Image(urlLogo()));
+        logo.getStyleClass().add(estilo);
+        logo.setFitWidth(ancho);
+        logo.setFitHeight(alto);
+        logo.setPreserveRatio(true);
+        logo.setSmooth(true);
+        return logo;
+    }
+
+    private static String urlLogo() {
+        URL recurso = AdministradorView.class.getResource("/images/eBarrio_logo.png");
+        if (recurso != null) {
+            return recurso.toExternalForm();
+        }
+        Path desdeRepo = Path.of("eBarrio/src/images/eBarrio_logo.png");
+        Path desdeModulo = Path.of("src/images/eBarrio_logo.png");
+        return Files.exists(desdeRepo) ? desdeRepo.toUri().toString() : desdeModulo.toUri().toString();
     }
 
     static Button crearBotonMenu(String texto) {

@@ -1,4 +1,4 @@
-package model.solicitud.test;
+package test;
 
 import model.accesos.Acceso;
 import model.barrio.Barrio;

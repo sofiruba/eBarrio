@@ -10,15 +10,13 @@
     -fx-border-width: 0 0 1 0;
 }
 
-.top-icon,
 .top-brand,
 .top-user {
     -fx-text-fill: #F7F5EF;
 }
 
-.top-icon {
-    -fx-font-size: 20px;
-    -fx-font-weight: 700;
+.top-logo {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 6, 0, 0, 2);
 }
 
 .top-brand {
@@ -72,30 +70,9 @@
     -fx-border-width: 0 1 0 0;
 }
 
-.logo-mark {
-    -fx-min-width: 68;
-    -fx-min-height: 68;
-    -fx-alignment: center;
-    -fx-background-color: rgba(247,245,239,0.10);
-    -fx-background-radius: 999;
-    -fx-border-color: #C7A973;
-    -fx-border-radius: 999;
-    -fx-text-fill: #F7F5EF;
-    -fx-font-size: 24px;
-    -fx-font-family: "Georgia";
-    -fx-font-weight: 700;
-}
-
-.logo {
-    -fx-text-fill: #F7F5EF;
-    -fx-font-size: 29px;
-    -fx-font-family: "Georgia";
-}
-
-.subtitle {
-    -fx-text-fill: #CDBE9B;
-    -fx-font-size: 12px;
-    -fx-padding: 0 0 18 0;
+.sidebar-logo,
+.login-logo {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 12, 0, 0, 3);
 }
 
 .menu-section {
@@ -142,17 +119,17 @@
     -fx-effect: dropshadow(gaussian, rgba(30, 38, 32, 0.14), 18, 0, 0, 6);
 }
 
+.login-title {
+    -fx-text-fill: #172019;
+    -fx-font-size: 21px;
+    -fx-font-weight: 800;
+}
+
 .login-brand {
     -fx-text-fill: #0B3D2B;
     -fx-font-size: 34px;
     -fx-font-family: "Georgia";
     -fx-font-weight: 700;
-}
-
-.login-title {
-    -fx-text-fill: #172019;
-    -fx-font-size: 21px;
-    -fx-font-weight: 800;
 }
 
 .login-help {

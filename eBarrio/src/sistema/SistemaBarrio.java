@@ -31,11 +31,13 @@ import model.solicitud.estados.EstadoEnProceso;
 import model.solicitud.estados.EstadoPendiente;
 import model.solicitud.estados.EstadoResuelto;
 import model.solicitud.personal.IncidenteSeguridad;
+import model.solicitud.personal.PersonalMantenimiento;
 import model.solicitud.personal.TareaMantenimiento;
 import model.solicitud.reclamo.Reclamo;
 
 // Clase principal del sistema. Funciona como fachada/controlador.
 // Centraliza las operaciones principales y mantiene los datos en memoria.
+
 public class SistemaBarrio {
 
     public static class UsuarioSistema {
@@ -376,6 +378,17 @@ public class SistemaBarrio {
 
         System.out.println("Avanzando solicitud [" + solicitud.getId() + "]...");
         solicitud.avanzar();
+        guardarDatosSiCorresponde();
+    }
+
+    public void avanzarTareaMantenimiento(PersonalMantenimiento personal, TareaMantenimiento tarea) {
+        if (personal == null || tarea == null) {
+            System.out.println("No se puede avanzar una tarea sin personal o tarea asignada.");
+            return;
+        }
+
+        personal.actualizarEstadoTarea(tarea);
+        notificar("Tarea actualizada [" + tarea.getId() + "]: " + tarea.getDescripcion(), "Mantenimiento");
         guardarDatosSiCorresponde();
     }
 
