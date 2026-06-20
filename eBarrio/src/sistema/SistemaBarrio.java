@@ -200,12 +200,37 @@ public class SistemaBarrio {
             String patente,
             String motivoVisita
     ) {
+        return registrarVisitante(residente, nombre, dni, patente, motivoVisita, "Visitante");
+    }
+
+    public Visitante registrarVisitante(
+            Residente residente,
+            String nombre,
+            String dni,
+            String patente,
+            String motivoVisita,
+            String tipo
+    ) {
+        return registrarVisitante(residente, nombre, dni, patente, motivoVisita, tipo, "Unica vez");
+    }
+
+    public Visitante registrarVisitante(
+            Residente residente,
+            String nombre,
+            String dni,
+            String patente,
+            String motivoVisita,
+            String tipo,
+            String frecuencia
+    ) {
         Visitante visitante = new Visitante(
                 contadorVisitantes++,
                 nombre,
                 dni,
                 patente,
-                motivoVisita
+                motivoVisita,
+                tipo,
+                frecuencia
         );
 
         visitantes.add(visitante);
@@ -216,6 +241,34 @@ public class SistemaBarrio {
 
         guardarDatosSiCorresponde();
         return visitante;
+    }
+
+    public void actualizarVisitante(Visitante visitante, String nombre, String dni, String patente, String motivoVisita, String tipo, String frecuencia) {
+        if (visitante == null) {
+            System.out.println("No se puede actualizar un visitante nulo.");
+            return;
+        }
+
+        visitante.setNombre(nombre);
+        visitante.setDni(dni);
+        visitante.setPatente(patente);
+        visitante.setMotivoVisita(motivoVisita);
+        visitante.setTipo(tipo);
+        visitante.setFrecuencia(frecuencia);
+        guardarDatosSiCorresponde();
+    }
+
+    public void eliminarVisitante(Visitante visitante) {
+        if (visitante == null) {
+            System.out.println("No se puede eliminar un visitante nulo.");
+            return;
+        }
+
+        visitantes.remove(visitante);
+        for (Residente residente : residentes) {
+            residente.getVisitantes().remove(visitante);
+        }
+        guardarDatosSiCorresponde();
     }
 
     // ─────────────────────────────────────────────
@@ -564,7 +617,9 @@ public class SistemaBarrio {
                     extraerCampoJson(visitanteJson, "nombre"),
                     extraerCampoJson(visitanteJson, "dni"),
                     extraerCampoJson(visitanteJson, "patente"),
-                    extraerCampoJson(visitanteJson, "motivoVisita")
+                    extraerCampoJson(visitanteJson, "motivoVisita"),
+                    valorOVisitante(extraerCampoJson(visitanteJson, "tipo")),
+                    valorOFrecuencia(extraerCampoJson(visitanteJson, "frecuencia"))
             );
         }
 
@@ -669,7 +724,7 @@ public class SistemaBarrio {
         try {
             return Files.readString(ruta, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            System.out.println("No se pudo leer " + ruta + ": " + e.getMessage());
+            System.out.println("No se pudieron cargar los datos guardados.");
             return null;
         }
     }
@@ -680,7 +735,7 @@ public class SistemaBarrio {
             Files.createDirectories(ruta.getParent());
             Files.writeString(ruta, contenido, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            System.out.println("No se pudo guardar " + ruta + ": " + e.getMessage());
+            System.out.println("No se pudieron guardar los cambios.");
         }
     }
 
@@ -807,6 +862,8 @@ public class SistemaBarrio {
                 json.append("    {\n");
                 json.append("      \"id\": ").append(visitante.getId()).append(",\n");
                 json.append("      \"residenteId\": ").append(residente.getId()).append(",\n");
+                json.append("      \"tipo\": \"").append(escaparJson(valorOVisitante(visitante.getTipo()))).append("\",\n");
+                json.append("      \"frecuencia\": \"").append(escaparJson(valorOFrecuencia(visitante.getFrecuencia()))).append("\",\n");
                 json.append("      \"nombre\": \"").append(escaparJson(visitante.getNombre())).append("\",\n");
                 json.append("      \"dni\": \"").append(escaparJson(visitante.getDni())).append("\",\n");
                 json.append("      \"patente\": \"").append(escaparJson(visitante.getPatente())).append("\",\n");
@@ -815,6 +872,14 @@ public class SistemaBarrio {
             }
         }
         json.append("  ]");
+    }
+
+    private String valorOVisitante(String tipo) {
+        return tipo == null || tipo.isBlank() ? "Visitante" : tipo;
+    }
+
+    private String valorOFrecuencia(String frecuencia) {
+        return frecuencia == null || frecuencia.isBlank() ? "Unica vez" : frecuencia;
     }
 
     private void agregarSolicitudesJson(StringBuilder json) {

@@ -12,7 +12,7 @@ public class EstadoResuelto implements IEstadoSolicitud {
 
     @Override
     public void cancelar(Solicitud solicitud) {
-        System.out.println("Error: no se puede cancelar una solicitud que ya fue marcada como resuelta.");
+        System.out.println("La solicitud ya fue resuelta y no se puede cancelar.");
     }
 
     @Override

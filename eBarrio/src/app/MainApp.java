@@ -53,7 +53,7 @@ public class MainApp extends Application {
     }
 
     private final SistemaBarrio sistemaBarrio = new SistemaBarrio();
-    private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter FORMATO_FECHA_HORA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     private final ObservableList<Residente> residentes = FXCollections.observableArrayList();
     private final ObservableList<Visitante> visitantes = FXCollections.observableArrayList();
@@ -236,7 +236,7 @@ public class MainApp extends Application {
         password.getStyleClass().add("text-field");
         password.setPrefWidth(360);
 
-        Label ayuda = new Label("Los usuarios se cargan desde src/data/usuarios.json");
+        Label ayuda = new Label("Ingresa con tu email y clave para continuar");
         ayuda.getStyleClass().add("login-help");
 
         Button ingresar = crearBotonPrimario("Ingresar", () -> intentarLogin(email.getText(), password.getText()));
@@ -260,14 +260,14 @@ public class MainApp extends Application {
             modoActual = usuario.esResidente() ? ModoVista.RESIDENTE : ModoVista.ADMIN;
             residenteActual = modoActual == ModoVista.RESIDENTE ? buscarResidentePorId(usuario.getResidenteId()) : null;
             if (modoActual == ModoVista.RESIDENTE && residenteActual == null) {
-                mostrarAlerta("Usuario sin residente", "El usuario existe, pero no tiene un residente asociado.");
+                mostrarAlerta("No pudimos abrir tu perfil", "La cuenta no tiene un residente asignado. Contacta a administracion.");
                 return;
             }
             abrirAppSegunSesion();
             return;
         }
 
-        mostrarAlerta("No se pudo iniciar sesion", "Revisa el email y la clave cargados en usuarios.json.");
+        mostrarAlerta("Datos incorrectos", "Ingresa bien el email y la clave para continuar.");
     }
 
     private Button crearBotonMenu(String texto) {
@@ -322,9 +322,9 @@ public class MainApp extends Application {
         Label viviendaTitulo = crearTituloCard("Datos de vivienda");
         VBox datosVivienda = new VBox(
                 8,
-                crearMiniDato("Lote", vivienda == null ? "Sin vivienda" : vivienda.getLote()),
-                crearMiniDato("Direccion", vivienda == null ? "Sin direccion" : vivienda.getDireccion()),
-                crearMiniDato("Contacto", residenteActual.getTelefono().isBlank() ? "Sin telefono" : residenteActual.getTelefono())
+                crearMiniDato("Lote", vivienda == null ? "No asignada" : vivienda.getLote()),
+                crearMiniDato("Direccion", vivienda == null ? "No cargada" : vivienda.getDireccion()),
+                crearMiniDato("Contacto", residenteActual.getTelefono().isBlank() ? "No cargado" : residenteActual.getTelefono())
         );
         VBox viviendaCard = new VBox(14, viviendaTitulo, datosVivienda);
         viviendaCard.getStyleClass().add("card");
@@ -409,8 +409,18 @@ public class MainApp extends Application {
         visitantes.setAll(residenteActual.getVisitantes());
 
         VBox contenido = crearContenidoBase("Mis visitantes", "Personas autorizadas para ingresar a tu vivienda");
-        HBox acciones = new HBox(10, crearBotonPrimario("Autorizar visitante", this::mostrarFormularioRegistrarVisitante));
-        contenido.getChildren().addAll(acciones, crearCard("Visitantes autorizados", tablaVisitantes));
+        ComboBox<String> filtroTipo = combo("Todos", "Todos", "Visitantes", "Proveedores");
+        filtroTipo.setPrefWidth(190);
+        filtroTipo.setOnAction(e -> aplicarFiltroAutorizados(filtroTipo.getValue()));
+        HBox filtroAutorizados = new HBox(10, new Label("Ver"), filtroTipo);
+        filtroAutorizados.setAlignment(Pos.CENTER_LEFT);
+        HBox acciones = new HBox(
+                10,
+                crearBotonPrimario("Autorizar visitante/proveedor", this::mostrarFormularioRegistrarVisitante),
+                crearBotonSecundario("Editar", this::mostrarFormularioEditarVisitante),
+                crearBotonSecundario("Eliminar", this::eliminarVisitanteSeleccionado)
+        );
+        contenido.getChildren().addAll(filtroAutorizados, acciones, crearCard("Visitantes autorizados", tablaVisitantes));
         root.setCenter(crearScroll(contenido));
     }
 
@@ -420,9 +430,16 @@ public class MainApp extends Application {
         tablaAccesos = crearTablaAccesos();
 
         VBox contenido = crearContenidoBase("Accesos y visitantes", "Visitantes autorizados, ingresos y egresos del barrio");
+        ComboBox<String> filtroTipo = combo("Todos", "Todos", "Visitantes", "Proveedores");
+        filtroTipo.setPrefWidth(190);
+        filtroTipo.setOnAction(e -> aplicarFiltroAutorizados(filtroTipo.getValue()));
+        HBox filtroAutorizados = new HBox(10, new Label("Ver"), filtroTipo);
+        filtroAutorizados.setAlignment(Pos.CENTER_LEFT);
         HBox accionesVisitantes = new HBox(
                 10,
-                crearBotonPrimario("Nuevo visitante", this::mostrarFormularioRegistrarVisitante)
+                crearBotonPrimario("Nuevo visitante/proveedor", this::mostrarFormularioRegistrarVisitante),
+                crearBotonSecundario("Editar", this::mostrarFormularioEditarVisitante),
+                crearBotonSecundario("Eliminar", this::eliminarVisitanteSeleccionado)
         );
         HBox accionesAccesos = new HBox(
                 10,
@@ -433,8 +450,32 @@ public class MainApp extends Application {
         VBox visitantesCard = crearCard("Visitantes autorizados", tablaVisitantes);
         VBox accesosCard = crearCard("Ingresos y egresos", tablaAccesos);
 
-        contenido.getChildren().addAll(accionesVisitantes, visitantesCard, accionesAccesos, accesosCard);
+        contenido.getChildren().addAll(filtroAutorizados, accionesVisitantes, visitantesCard, accionesAccesos, accesosCard);
         root.setCenter(crearScroll(contenido));
+    }
+
+    private void aplicarFiltroAutorizados(String filtro) {
+        Iterable<Visitante> fuente = modoActual == ModoVista.RESIDENTE && residenteActual != null
+                ? residenteActual.getVisitantes()
+                : sistemaBarrio.getVisitantes();
+
+        if ("Todos".equalsIgnoreCase(filtro)) {
+            ObservableList<Visitante> todos = FXCollections.observableArrayList();
+            for (Visitante visitante : fuente) {
+                todos.add(visitante);
+            }
+            visitantes.setAll(todos);
+            return;
+        }
+
+        String tipoBuscado = "Proveedores".equalsIgnoreCase(filtro) ? "Proveedor" : "Visitante";
+        ObservableList<Visitante> filtrados = FXCollections.observableArrayList();
+        for (Visitante visitante : fuente) {
+            if (tipoBuscado.equalsIgnoreCase(visitante.getTipo())) {
+                filtrados.add(visitante);
+            }
+        }
+        visitantes.setAll(filtrados);
     }
 
     private void mostrarSolicitudes() {
@@ -569,7 +610,7 @@ public class MainApp extends Application {
         TableColumn<Residente, String> colVivienda = new TableColumn<>("Vivienda");
         colVivienda.setCellValueFactory(data -> {
             Vivienda vivienda = data.getValue().getVivienda();
-            return new ReadOnlyStringWrapper(vivienda == null ? "Sin vivienda" : vivienda.getLote());
+            return new ReadOnlyStringWrapper(vivienda == null ? "No asignada" : vivienda.getLote());
         });
 
         TableColumn<Residente, String> colTelefono = new TableColumn<>("Telefono");
@@ -592,6 +633,12 @@ public class MainApp extends Application {
         TableColumn<Visitante, String> colNombre = new TableColumn<>("Nombre");
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
 
+        TableColumn<Visitante, String> colTipo = new TableColumn<>("Tipo");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+
+        TableColumn<Visitante, String> colFrecuencia = new TableColumn<>("Frecuencia");
+        colFrecuencia.setCellValueFactory(new PropertyValueFactory<>("frecuencia"));
+
         TableColumn<Visitante, String> colDni = new TableColumn<>("DNI");
         colDni.setCellValueFactory(new PropertyValueFactory<>("dni"));
 
@@ -601,9 +648,11 @@ public class MainApp extends Application {
         TableColumn<Visitante, String> colMotivo = new TableColumn<>("Motivo");
         colMotivo.setCellValueFactory(new PropertyValueFactory<>("motivoVisita"));
 
+        tabla.getColumns().add(colTipo);
         tabla.getColumns().add(colNombre);
         tabla.getColumns().add(colDni);
         tabla.getColumns().add(colPatente);
+        tabla.getColumns().add(colFrecuencia);
         tabla.getColumns().add(colMotivo);
         configurarTabla(tabla);
         tabla.setPrefHeight(420);
@@ -719,25 +768,28 @@ public class MainApp extends Application {
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank()
                     || email.getText().isBlank() || lote.getText().isBlank() || direccion.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI, email, lote y direccion son obligatorios.");
+                mostrarAlerta("Faltan datos", "Completa nombre, apellido, DNI, email, lote y direccion.");
+                return;
+            }
+            if (!validarDocumento(dni.getText()) || !validarEmail(email.getText()) || !validarTelefonoOpcional(telefono.getText())) {
                 return;
             }
 
             Vivienda vivienda = sistemaBarrio.registrarVivienda(
                     barrioPrincipal,
-                    lote.getText(),
-                    direccion.getText()
+                    lote.getText().trim(),
+                    direccion.getText().trim()
             );
             Residente residente = sistemaBarrio.registrarResidente(
-                    nombre.getText(),
-                    apellido.getText(),
-                    dni.getText(),
-                    email.getText(),
-                    telefono.getText(),
+                    nombre.getText().trim(),
+                    apellido.getText().trim(),
+                    dni.getText().trim(),
+                    email.getText().trim(),
+                    telefono.getText().trim(),
                     vivienda
             );
-            sistemaBarrio.crearCuentaResidenteSiNoExiste(residente, dni.getText());
-            mostrarAlerta("Cuenta creada", "Usuario: " + residente.getEmail() + "\nClave inicial: " + dni.getText());
+            sistemaBarrio.crearCuentaResidenteSiNoExiste(residente, dni.getText().trim());
+            mostrarAlerta("Cuenta creada", "Usuario: " + residente.getEmail() + "\nClave inicial: " + dni.getText().trim());
             actualizarYVolverAResidentes();
         }
     }
@@ -745,7 +797,7 @@ public class MainApp extends Application {
     private void mostrarFormularioEditarResidente() {
         Residente residente = obtenerResidenteSeleccionado();
         if (residente == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona un residente de la tabla para modificarlo.");
+            mostrarAlerta("Elegir residente", "Primero selecciona un residente de la tabla.");
             return;
         }
 
@@ -782,19 +834,22 @@ public class MainApp extends Application {
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (nombre.getText().isBlank() || apellido.getText().isBlank() || dni.getText().isBlank()
                     || email.getText().isBlank() || lote.getText().isBlank() || direccion.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "Nombre, apellido, DNI, email, lote y direccion son obligatorios.");
+                mostrarAlerta("Faltan datos", "Completa nombre, apellido, DNI, email, lote y direccion.");
+                return;
+            }
+            if (!validarDocumento(dni.getText()) || !validarEmail(email.getText()) || !validarTelefonoOpcional(telefono.getText())) {
                 return;
             }
 
             sistemaBarrio.actualizarResidente(
                     residente,
-                    nombre.getText(),
-                    apellido.getText(),
-                    dni.getText(),
-                    email.getText(),
-                    telefono.getText(),
-                    lote.getText(),
-                    direccion.getText()
+                    nombre.getText().trim(),
+                    apellido.getText().trim(),
+                    dni.getText().trim(),
+                    email.getText().trim(),
+                    telefono.getText().trim(),
+                    lote.getText().trim(),
+                    direccion.getText().trim()
             );
             actualizarYVolverAResidentes();
         }
@@ -806,8 +861,10 @@ public class MainApp extends Application {
             return;
         }
 
-        Dialog<ButtonType> dialog = crearDialogo("Registrar visitante", "Visitante para " + residente.getNombre() + " " + residente.getApellido());
+        Dialog<ButtonType> dialog = crearDialogo("Registrar visitante/proveedor", "Autorizado por " + residente.getNombre() + " " + residente.getApellido());
 
+        ComboBox<String> tipo = combo("Visitante", "Visitante", "Proveedor");
+        ComboBox<String> frecuencia = combo("Unica vez", "Unica vez", "Semanal", "Mensual");
         TextField nombre = campo("Nombre del visitante");
         TextField dni = campo("DNI");
         TextField patente = campo("Patente opcional");
@@ -815,25 +872,101 @@ public class MainApp extends Application {
         CheckBox registrarAccesoAhora = new CheckBox("Desea registrar acceso ahora");
 
         GridPane grid = crearGridFormulario();
-        agregarFila(grid, 0, "Nombre", nombre);
-        agregarFila(grid, 1, "DNI", dni);
-        agregarFila(grid, 2, "Patente opcional", patente);
-        agregarFila(grid, 3, "Motivo", motivo);
-        agregarFila(grid, 4, "Ingreso", registrarAccesoAhora);
+        agregarFila(grid, 0, "Tipo", tipo);
+        agregarFila(grid, 1, "Nombre", nombre);
+        agregarFila(grid, 2, "DNI", dni);
+        agregarFila(grid, 3, "Patente opcional", patente);
+        agregarFila(grid, 4, "Frecuencia", frecuencia);
+        agregarFila(grid, 5, "Motivo", motivo);
+        agregarFila(grid, 6, "Ingreso", registrarAccesoAhora);
 
         dialog.getDialogPane().setContent(grid);
         Optional<ButtonType> resultado = dialog.showAndWait();
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (nombre.getText().isBlank() || dni.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "Nombre y DNI del visitante son obligatorios.");
+                mostrarAlerta("Faltan datos", "Completa nombre y DNI.");
+                return;
+            }
+            if (!validarDocumento(dni.getText()) || !validarPatenteOpcional(patente.getText())) {
                 return;
             }
 
-            Visitante visitante = sistemaBarrio.registrarVisitante(residente, nombre.getText(), dni.getText(), patente.getText(), motivo.getText());
+            Visitante visitante = sistemaBarrio.registrarVisitante(residente, nombre.getText().trim(), dni.getText().trim(), patente.getText().trim(), motivo.getText().trim(), tipo.getValue(), frecuencia.getValue());
             if (registrarAccesoAhora.isSelected()) {
                 sistemaBarrio.registrarAcceso(visitante.getNombre(), visitante.getDni());
             }
+            if (modoActual == ModoVista.RESIDENTE) {
+                actualizarYVolverAMisVisitantes();
+            } else {
+                actualizarYVolverAAccesos();
+            }
+        }
+    }
+
+    private void mostrarFormularioEditarVisitante() {
+        Visitante visitante = obtenerVisitanteSeleccionado();
+        if (visitante == null) {
+            mostrarAlerta("Elegir persona", "Primero selecciona un visitante o proveedor de la tabla.");
+            return;
+        }
+
+        Dialog<ButtonType> dialog = crearDialogo("Editar visitante/proveedor", "Modificar autorizado");
+
+        ComboBox<String> tipo = combo(visitante.getTipo() == null ? "Visitante" : visitante.getTipo(), "Visitante", "Proveedor");
+        ComboBox<String> frecuencia = combo(visitante.getFrecuencia() == null ? "Unica vez" : visitante.getFrecuencia(), "Unica vez", "Semanal", "Mensual");
+        TextField nombre = campo("Nombre");
+        nombre.setText(visitante.getNombre());
+        TextField dni = campo("DNI");
+        dni.setText(visitante.getDni());
+        TextField patente = campo("Patente opcional");
+        patente.setText(visitante.getPatente());
+        TextField motivo = campo("Motivo");
+        motivo.setText(visitante.getMotivoVisita());
+
+        GridPane grid = crearGridFormulario();
+        agregarFila(grid, 0, "Tipo", tipo);
+        agregarFila(grid, 1, "Nombre", nombre);
+        agregarFila(grid, 2, "DNI", dni);
+        agregarFila(grid, 3, "Patente opcional", patente);
+        agregarFila(grid, 4, "Frecuencia", frecuencia);
+        agregarFila(grid, 5, "Motivo", motivo);
+
+        dialog.getDialogPane().setContent(grid);
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            if (nombre.getText().isBlank() || dni.getText().isBlank()) {
+                mostrarAlerta("Faltan datos", "Completa nombre y DNI.");
+                return;
+            }
+            if (!validarDocumento(dni.getText()) || !validarPatenteOpcional(patente.getText())) {
+                return;
+            }
+
+            sistemaBarrio.actualizarVisitante(visitante, nombre.getText().trim(), dni.getText().trim(), patente.getText().trim(), motivo.getText().trim(), tipo.getValue(), frecuencia.getValue());
+            if (modoActual == ModoVista.RESIDENTE) {
+                actualizarYVolverAMisVisitantes();
+            } else {
+                actualizarYVolverAAccesos();
+            }
+        }
+    }
+
+    private void eliminarVisitanteSeleccionado() {
+        Visitante visitante = obtenerVisitanteSeleccionado();
+        if (visitante == null) {
+            mostrarAlerta("Elegir persona", "Primero selecciona un visitante o proveedor de la tabla.");
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Eliminar visitante/proveedor");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("Eliminar a " + visitante.getNombre() + " de autorizados?");
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            sistemaBarrio.eliminarVisitante(visitante);
             if (modoActual == ModoVista.RESIDENTE) {
                 actualizarYVolverAMisVisitantes();
             } else {
@@ -864,7 +997,7 @@ public class MainApp extends Application {
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (descripcion.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "La descripcion es obligatoria.");
+                mostrarAlerta("Falta descripcion", "Escribe una descripcion para continuar.");
                 return;
             }
 
@@ -899,7 +1032,7 @@ public class MainApp extends Application {
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (descripcion.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "La descripcion es obligatoria.");
+                mostrarAlerta("Falta descripcion", "Escribe una descripcion para continuar.");
                 return;
             }
 
@@ -925,7 +1058,7 @@ public class MainApp extends Application {
 
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             if (descripcion.getText().isBlank()) {
-                mostrarAlerta("Datos incompletos", "La descripcion es obligatoria.");
+                mostrarAlerta("Falta descripcion", "Escribe una descripcion para continuar.");
                 return;
             }
 
@@ -953,7 +1086,7 @@ public class MainApp extends Application {
     private void registrarEgresoAccesoSeleccionado() {
         Acceso acceso = tablaAccesos == null ? null : tablaAccesos.getSelectionModel().getSelectedItem();
         if (acceso == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona un acceso activo para registrar el egreso.");
+            mostrarAlerta("Elegir acceso", "Selecciona un ingreso activo para registrar el egreso.");
             return;
         }
         if (!acceso.estaActivo()) {
@@ -1000,7 +1133,7 @@ public class MainApp extends Application {
         dialog.setResultConverter(button -> button == ButtonType.OK ? comboVisitantes.getValue() : null);
 
         if (comboVisitantes.getItems().isEmpty()) {
-            mostrarAlerta("Sin visitantes", "No hay visitantes autorizados para registrar ingresos.");
+            mostrarAlerta("No hay personas autorizadas", "Primero registra un visitante o proveedor.");
             return null;
         }
 
@@ -1010,7 +1143,7 @@ public class MainApp extends Application {
     private void avanzarEstadoSolicitudSeleccionada() {
         Solicitud solicitud = obtenerSolicitudSeleccionada();
         if (solicitud == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona una solicitud para avanzar su estado.");
+            mostrarAlerta("Elegir solicitud", "Primero selecciona una solicitud de la tabla.");
             return;
         }
 
@@ -1021,7 +1154,7 @@ public class MainApp extends Application {
     private void cancelarSolicitudSeleccionada() {
         Solicitud solicitud = obtenerSolicitudSeleccionada();
         if (solicitud == null) {
-            mostrarAlerta("Seleccion requerida", "Selecciona una solicitud para cancelarla.");
+            mostrarAlerta("Elegir solicitud", "Primero selecciona una solicitud de la tabla.");
             return;
         }
 
@@ -1031,6 +1164,10 @@ public class MainApp extends Application {
 
     private Residente obtenerResidenteSeleccionado() {
         return tablaResidentes == null ? null : tablaResidentes.getSelectionModel().getSelectedItem();
+    }
+
+    private Visitante obtenerVisitanteSeleccionado() {
+        return tablaVisitantes == null ? null : tablaVisitantes.getSelectionModel().getSelectedItem();
     }
 
     private Solicitud obtenerSolicitudSeleccionada() {
@@ -1155,6 +1292,42 @@ public class MainApp extends Application {
 
     private String textoOValor(TextField campo, String valorPorDefecto) {
         return campo.getText().isBlank() ? valorPorDefecto : campo.getText();
+    }
+
+    private boolean validarDocumento(String valor) {
+        String documento = valor.trim();
+        if (!documento.matches("\\d{7,11}")) {
+            mostrarAlerta("Revisa el documento", "Ingresa un DNI o CUIT con numeros, entre 7 y 11 digitos.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarTelefonoOpcional(String valor) {
+        String telefono = valor.trim();
+        if (!telefono.isEmpty() && !telefono.matches("\\d{8,15}")) {
+            mostrarAlerta("Revisa el telefono", "Ingresa un telefono con numeros, entre 8 y 15 digitos.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarEmail(String valor) {
+        String email = valor.trim();
+        if (!email.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+            mostrarAlerta("Revisa el email", "Ingresa un email valido para poder crear la cuenta.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validarPatenteOpcional(String valor) {
+        String patente = valor.trim();
+        if (!patente.isEmpty() && !patente.matches("[A-Za-z0-9]{6,8}")) {
+            mostrarAlerta("Revisa la patente", "La patente es opcional. Si la cargas, usa entre 6 y 8 letras o numeros.");
+            return false;
+        }
+        return true;
     }
 
     private void asegurarResidenteActual() {

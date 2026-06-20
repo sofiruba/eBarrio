@@ -26,7 +26,7 @@ public class Acceso {
 
     public void registrarEgreso() {
         if (fechaIngreso == null) {
-            System.out.println("Error: no se puede registrar egreso sin ingreso previo.");
+            System.out.println("Primero registra el ingreso y luego el egreso.");
             return;
         }
         this.fechaEgreso = LocalDateTime.now();

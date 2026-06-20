@@ -31,8 +31,8 @@
     },
     {
       "id": 4,
-      "lote": "2",
-      "direccion": "Sin direccion"
+      "lote": "Lote 31",
+      "direccion": "Calle Jacaranda 310"
     }
   ],
   "residentes": [
@@ -67,9 +67,9 @@
       "id": 4,
       "nombre": "Facundo",
       "apellido": "Etchart",
-      "dni": "12345678",
+      "dni": "34567891",
       "email": "facu@gmail.com",
-      "telefono": "0303456",
+      "telefono": "1167894321",
       "viviendaId": 4
     }
   ],
@@ -77,6 +77,8 @@
     {
       "id": 1,
       "residenteId": 1,
+      "tipo": "Visitante",
+      "frecuencia": "Unica vez",
       "nombre": "Camila Ruiz",
       "dni": "42123123",
       "patente": "AB123CD",
@@ -85,6 +87,8 @@
     {
       "id": 2,
       "residenteId": 2,
+      "tipo": "Visitante",
+      "frecuencia": "Unica vez",
       "nombre": "Juan Torres",
       "dni": "38111222",
       "patente": "AC456EF",
@@ -93,26 +97,32 @@
     {
       "id": 3,
       "residenteId": 3,
+      "tipo": "Proveedor",
+      "frecuencia": "Semanal",
       "nombre": "Carlos Ruiz",
       "dni": "34999888",
       "patente": "EF456GH",
-      "motivoVisita": "Proveedor autorizado"
+      "motivoVisita": "Servicio de mantenimiento autorizado"
     },
     {
       "id": 4,
       "residenteId": 4,
+      "tipo": "Visitante",
+      "frecuencia": "Unica vez",
       "nombre": "Ignacio Cortes",
-      "dni": "77777777",
+      "dni": "40555111",
       "patente": "AB123CD",
       "motivoVisita": "Amistad y amor"
     },
     {
-      "id": 5,
+      "id": 6,
       "residenteId": 4,
-      "nombre": "marco teves",
-      "dni": "12121212",
-      "patente": "ab123ab",
-      "motivoVisita": "Amigoo"
+      "tipo": "Proveedor",
+      "frecuencia": "Semanal",
+      "nombre": "Ives Agua",
+      "dni": "30711223344",
+      "patente": "",
+      "motivoVisita": "Entrega semanal de bidones"
     }
   ],
   "solicitudes": [
@@ -156,7 +166,7 @@
       "id": 5,
       "tipo": "reclamo",
       "nombre": "Facundo Etchart",
-      "descripcion": "no estan cortando el pasto por mi zona y tengo riesgo de dengue",
+      "descripcion": "No estan cortando el pasto por mi zona y tengo riesgo de dengue",
       "prioridad": "Alta",
       "detalle": "Enfermedad",
       "estado": "En proceso"
@@ -182,12 +192,32 @@
     {
       "id": 3,
       "nombreVisitante": "Ignacio Cortes",
-      "dniVisitante": "77777777",
+      "dniVisitante": "40555111",
       "fechaIngreso": "2026-06-20T00:35:24.986744",
       "fechaEgreso": "2026-06-20T00:35:57.680605",
+      "finalizado": true
+    },
+    {
+      "id": 4,
+      "nombreVisitante": "Ives Agua",
+      "dniVisitante": "30711223344",
+      "fechaIngreso": "2026-06-20T00:50:25.944303",
+      "fechaEgreso": "2026-06-20T00:50:34.529949",
       "finalizado": true
     }
   ],
   "notificaciones": [
+    {
+      "id": 1,
+      "mensaje": "Ingreso registrado: Ives Agua",
+      "destinatario": "Seguridad",
+      "fecha": "2026-06-20T00:50:25.945096"
+    },
+    {
+      "id": 2,
+      "mensaje": "Egreso registrado: Ives Agua",
+      "destinatario": "Seguridad",
+      "fecha": "2026-06-20T00:50:34.530421"
+    }
   ]
 }

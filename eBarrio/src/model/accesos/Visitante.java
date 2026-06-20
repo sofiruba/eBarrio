@@ -5,13 +5,25 @@ public class Visitante {
     private String dni;
     private String patente;
     private String motivoVisita;
+    private String tipo;
+    private String frecuencia;
 
     public Visitante(int id, String nombre, String dni, String patente, String motivoVisita) {
+        this(id, nombre, dni, patente, motivoVisita, "Visitante", "Unica vez");
+    }
+
+    public Visitante(int id, String nombre, String dni, String patente, String motivoVisita, String tipo) {
+        this(id, nombre, dni, patente, motivoVisita, tipo, "Unica vez");
+    }
+
+    public Visitante(int id, String nombre, String dni, String patente, String motivoVisita, String tipo, String frecuencia) {
         this.id = id;
         this.nombre = nombre;
         this.dni = dni;
         this.patente = patente;
         this.motivoVisita = motivoVisita;
+        this.tipo = tipo;
+        this.frecuencia = frecuencia;
     }
 
     public String mostrarDatos() {
@@ -58,6 +70,22 @@ public class Visitante {
         this.motivoVisita = motivoVisita;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getFrecuencia() {
+        return frecuencia;
+    }
+
+    public void setFrecuencia(String frecuencia) {
+        this.frecuencia = frecuencia;
+    }
+
     @Override
     public String toString() {
         return "Visitante{" +
@@ -66,6 +94,8 @@ public class Visitante {
                 ", dni='" + dni + '\'' +
                 ", patente='" + patente + '\'' +
                 ", motivoVisita='" + motivoVisita + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", frecuencia='" + frecuencia + '\'' +
                 '}';
     }
 }
