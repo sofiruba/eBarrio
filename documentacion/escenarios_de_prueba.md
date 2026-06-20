@@ -14,6 +14,12 @@
 Resultado esperado: la consola muestra los cambios de estado, las notificaciones y los
 listados finales sin errores de ejecucion.
 
+Comando sugerido:
+
+```powershell
+java -cp out Main
+```
+
 ## Escenario 2: ciclo de vida de reclamo
 
 1. Ejecutar `model.solicitud.test.TestReclamo`.
@@ -27,6 +33,12 @@ Resultado esperado:
 - En proceso -> Resuelto.
 - Resuelto -> Cerrado.
 - Cerrado no permite avanzar.
+
+Comando sugerido:
+
+```powershell
+java -cp out model.solicitud.test.TestReclamo
+```
 
 ## Escenario 3: cancelacion de solicitud
 
@@ -42,3 +54,33 @@ Resultado esperado: la solicitud pasa a Cerrado.
 3. Registrar egreso.
 
 Resultado esperado: el acceso queda con fecha de ingreso y fecha de egreso.
+
+## Escenario 5: prueba integral automatizable
+
+1. Ejecutar `model.solicitud.test.EscenariosEjecucion`.
+2. Validar altas de barrio, vivienda, residente y visitante.
+3. Validar ingreso y egreso.
+4. Validar ciclo de vida de reclamo.
+5. Validar cancelacion de tarea.
+6. Validar busqueda de solicitud por ID.
+
+Resultado esperado: la consola muestra `Todos los escenarios de ejecucion finalizaron correctamente.`
+
+Comando sugerido:
+
+```powershell
+java -cp out model.solicitud.test.EscenariosEjecucion
+```
+
+## Escenario 6: interfaz JavaFX
+
+1. Ejecutar `app.MainApp` con JavaFX configurado.
+2. Verificar el dashboard inicial con metricas y tablas.
+3. Ir a Residentes y crear un residente.
+4. Seleccionar un residente y registrar un visitante.
+5. Seleccionar un visitante y registrar un acceso.
+6. Seleccionar un acceso y registrar egreso.
+7. Crear un reclamo, una tarea y un incidente.
+8. Avanzar o cancelar una solicitud seleccionada.
+
+Resultado esperado: las tablas y metricas se actualizan en memoria sin reiniciar la app.

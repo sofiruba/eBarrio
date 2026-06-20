@@ -1,110 +1,120 @@
+import model.Administrador;
 import model.accesos.Acceso;
 import model.barrio.Barrio;
 import model.barrio.Residente;
 import model.barrio.Vivienda;
-import sistema.SistemaBarrio;
 import model.solicitud.personal.IncidenteSeguridad;
 import model.solicitud.personal.PersonalMantenimiento;
 import model.solicitud.personal.PersonalSeguridad;
 import model.solicitud.personal.TareaMantenimiento;
 import model.solicitud.reclamo.Reclamo;
-import model.Administrador;
+import sistema.SistemaBarrio;
 
 public class Main {
 
     public static void main(String[] args) {
-
         System.out.println("============================================");
-        System.out.println("       SISTEMA eBarrio - Demostración       ");
+        System.out.println("       SISTEMA eBarrio - Demostracion       ");
         System.out.println("============================================\n");
 
-        // ── 1. Inicializar el sistema (Facade) 
         SistemaBarrio sistema = new SistemaBarrio();
 
-        // ── 2. Crear estructura del barrio
-        Barrio barrio = new Barrio(1, "eBarrio Norte", "Av. Central 1000");
+        Barrio barrio = sistema.registrarBarrio("eBarrio Norte", "Av. Central 1000");
+        Vivienda vivienda1 = sistema.registrarVivienda(barrio, "Lote 12", "Calle Roble 120");
+        Vivienda vivienda2 = sistema.registrarVivienda(barrio, "Lote 18", "Calle Lago 85");
 
-        Vivienda vivienda1 = new Vivienda(1, "Lote 12", "Calle Roble 120");
-        Vivienda vivienda2 = new Vivienda(2, "Lote 18", "Calle Lago 85");
+        Residente residente1 = sistema.registrarResidente(
+                "Sofia",
+                "Gomez",
+                "40111222",
+                "sofia@email.com",
+                "1130000000",
+                vivienda1
+        );
 
-        Residente residente1 = new Residente(1, "Sofía", "Gómez", "40111222", "sofia@email.com", "1130000000");
-        Residente residente2 = new Residente(2, "Martín", "Pérez", "38999888", "martin@email.com", "1140000000");
+        Residente residente2 = sistema.registrarResidente(
+                "Martin",
+                "Perez",
+                "38999888",
+                "martin@email.com",
+                "1140000000",
+                vivienda2
+        );
 
-        vivienda1.agregarResidente(residente1);
-        vivienda2.agregarResidente(residente2);
-        barrio.agregarVivienda(vivienda1);
-        barrio.agregarVivienda(vivienda2);
+        sistema.registrarVisitante(residente1, "Camila Ruiz", "42123123", "AB123CD", "Visita familiar");
+        sistema.registrarVisitante(residente2, "Juan Torres", "38111222", "AC456EF", "Reunion con residente");
 
         System.out.println("Barrio configurado: " + barrio);
-        System.out.println("Residentes en Lote 12: " + vivienda1.obtenerResidentes());
+        System.out.println("Residentes registrados: " + sistema.getResidentes().size());
+        System.out.println("Visitantes autorizados: " + sistema.getVisitantes().size());
 
-        // ── 3. Registrar un Administrador como observador global 
-        Administrador admin = new Administrador(1, "María García", "maria@ebarrio.com");
+        Administrador admin = new Administrador(1, "Maria Garcia", "maria@ebarrio.com");
         sistema.registrarObservadorGlobal(admin);
         System.out.println("\nAdministrador registrado: " + admin);
 
-        // ── 4. Crear solicitudes a través del sistema (Facade) 
-        System.out.println("\n--- Creando solicitudes ---");
-
+        System.out.println("\n--- Creando solicitudes con Factory + Facade ---");
         Reclamo reclamo = sistema.crearReclamo(
-            "R01","Luminaria rota en sector G", "Alta", "Infraestructura"
+                "Sofia Gomez",
+                "Luminaria rota en sector G",
+                "Alta",
+                "Infraestructura"
         );
 
         TareaMantenimiento tarea = sistema.crearTareaMantenimiento(
-            "T02", "Cortar el pasto del parque central", "Media", "Parque Central"
+                "Mantenimiento",
+                "Cortar el pasto del parque central",
+                "Media",
+                "Parque Central"
         );
 
         IncidenteSeguridad incidente = sistema.crearIncidenteSeguridad(
-            "I01", "Persona desconocida merodeando el perímetro", "Alta", "Alto"
+                "Seguridad",
+                "Persona desconocida merodeando el perimetro",
+                "Alta",
+                "Alto"
         );
 
         sistema.listarSolicitudes();
 
-        // ── 5. Ciclo de vida completo de un reclamo (State + Observer) 
-        System.out.println("--- Avanzando el reclamo por todos sus estados ---");
-        sistema.avanzarEstadoSolicitud(reclamo); // Pendiente -> Asignado
-        sistema.avanzarEstadoSolicitud(reclamo); // Asignado  -> En proceso
-        sistema.avanzarEstadoSolicitud(reclamo); // En proceso -> Resuelto
-        sistema.avanzarEstadoSolicitud(reclamo); // Resuelto  -> Cerrado
-        sistema.avanzarEstadoSolicitud(reclamo); // Cerrado   -> error esperado
+        System.out.println("--- Avanzando el reclamo por todos sus estados (State + Observer) ---");
+        sistema.avanzarEstadoSolicitud(reclamo);
+        sistema.avanzarEstadoSolicitud(reclamo);
+        sistema.avanzarEstadoSolicitud(reclamo);
+        sistema.avanzarEstadoSolicitud(reclamo);
+        sistema.avanzarEstadoSolicitud(reclamo);
 
-        // ── 6. Cancelar una solicitud desde un estado intermedio 
-        System.out.println("\n--- Cancelando la tarea desde estado Asignado ---");
-        sistema.avanzarEstadoSolicitud(tarea);  // Pendiente -> Asignado
-        sistema.cancelarSolicitud(tarea);       // Asignado  -> Cerrado
+        System.out.println("\n--- Cancelando una tarea desde estado Asignado ---");
+        sistema.avanzarEstadoSolicitud(tarea);
+        sistema.cancelarSolicitud(tarea);
 
-        // ── 7. Accesos (PersonalSeguridad + Acceso) 
-        System.out.println("\n--- Registrando accesos de visitantes ---");
-
-        PersonalSeguridad guardia = new PersonalSeguridad(1, "Carlos López", "Mañana");
+        System.out.println("\n--- Registrando accesos ---");
+        PersonalSeguridad guardia = new PersonalSeguridad(1, "Carlos Lopez", "Manana");
         System.out.println(guardia);
 
         Acceso acceso1 = sistema.registrarAcceso("Juan Torres", "42123123");
-        Acceso acceso2 = sistema.registrarAcceso("Camila Ruiz", "38111222");
-
-        System.out.println("\n--- Registrando egreso de Juan Torres ---");
+        sistema.registrarAcceso("Camila Ruiz", "38111222");
         sistema.registrarEgresoAcceso(acceso1);
-
         sistema.listarAccesos();
 
-        // ── 8. Personal de mantenimiento actualizando una tarea 
-        System.out.println("--- Personal de mantenimiento operando ---");
-
+        System.out.println("--- Personal de mantenimiento actualizando tarea ---");
         PersonalMantenimiento operario = new PersonalMantenimiento(1, "Sergio Ruiz", "Parque Central");
         System.out.println(operario);
+        operario.consultarTarea(tarea);
 
         TareaMantenimiento tarea2 = sistema.crearTareaMantenimiento(
-            "T03", "Reparar banco roto en plaza", "Baja", "Plaza"
+                "Mantenimiento",
+                "Reparar banco roto en plaza",
+                "Baja",
+                "Plaza"
         );
-        operario.consultarTarea(tarea2);
-        operario.actualizarEstadoTarea(tarea2); // Observer
+        operario.actualizarEstadoTarea(tarea2);
 
-        // ── 9. Estado final 
-        System.out.println("\n--- Estado final de todas las solicitudes ---");
+        System.out.println("\n--- Estado final ---");
         sistema.listarSolicitudes();
+        System.out.println("Notificaciones emitidas: " + sistema.getNotificaciones().size());
 
         System.out.println("============================================");
-        System.out.println("          Demostración finalizada           ");
+        System.out.println("          Demostracion finalizada           ");
         System.out.println("============================================");
     }
 }

@@ -6,13 +6,13 @@ public class EstadoResuelto implements IEstadoSolicitud {
 
     @Override
     public void avanzar(Solicitud solicitud) {
-        System.out.println("El reclamo pasa de 'Resuelto' a 'Cerrado'.");
+        System.out.println("La solicitud pasa de 'Resuelto' a 'Cerrado'.");
         solicitud.setEstado(new EstadoCerrado());
     }
 
     @Override
     public void cancelar(Solicitud solicitud) {
-        System.out.println("Error: no se puede cancelar un reclamo que ya ha sido marcado como resuelto.");
+        System.out.println("Error: no se puede cancelar una solicitud que ya fue marcada como resuelta.");
     }
 
     @Override

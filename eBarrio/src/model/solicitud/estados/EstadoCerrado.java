@@ -11,7 +11,7 @@ public class EstadoCerrado implements IEstadoSolicitud {
 
     @Override
     public void cancelar(Solicitud solicitud) {
-        System.out.println("Error: no se puede cancelar un reclamo que ya ha sido cerrado.");
+        System.out.println("Error: no se puede cancelar una solicitud que ya fue cerrada.");
     }
 
     @Override

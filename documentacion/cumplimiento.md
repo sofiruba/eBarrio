@@ -31,6 +31,7 @@ lo ya presentado por el grupo.
 | Justificacion de decisiones | Cumple como base | Informes y README |
 | Demo funcional | Cumple | `Main.java` |
 | Entregas previas | Cumple | `documentacion/entregas_previas` |
+| Interfaz JavaFX inicial | Cumple | `app/MainApp.java` |
 
 ## Pendientes recomendados
 
@@ -38,7 +39,7 @@ lo ya presentado por el grupo.
 - Agregar capturas de pantalla o salida de consola al informe final.
 - Completar reflexiones individuales reales de cada integrante.
 - Verificar la compilacion en una maquina con JDK instalado.
-- Terminar la interfaz JavaFX en una etapa posterior.
+- Ajustar configuracion JavaFX segun la maquina usada para la defensa.
 
 ## Observacion sobre verificacion local
 

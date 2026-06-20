@@ -6,13 +6,13 @@ public class EstadoAsignado implements IEstadoSolicitud {
 
     @Override
     public void avanzar(Solicitud solicitud) {
-        System.out.println("El reclamo pasa de 'Asignado' a 'En proceso'.");
+        System.out.println("La solicitud pasa de 'Asignado' a 'En proceso'.");
         solicitud.setEstado(new EstadoEnProceso());
     }
 
     @Override
     public void cancelar(Solicitud solicitud) {
-        System.out.println("El reclamo que se encontraba ya asignado ha sido directamente cerrado.");
+        System.out.println("La solicitud que se encontraba ya asignada ha sido directamente cerrada.");
         solicitud.setEstado(new EstadoCerrado());
     }
 

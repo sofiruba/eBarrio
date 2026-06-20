@@ -23,8 +23,8 @@ principales de la problematica: registrar residentes y viviendas, autorizar visi
 registrar ingresos y egresos, crear reclamos o tareas, avanzar su estado y notificar a
 los responsables cuando una solicitud cambia.
 
-La implementacion actual contiene una demostracion por consola. La interfaz JavaFX esta
-en desarrollo y se conserva como primera version visual del panel.
+La implementacion actual contiene una demostracion por consola, escenarios de ejecucion
+y una interfaz JavaFX inicial con dashboard, tablas y formularios en memoria.
 
 ## Estructura del proyecto
 
@@ -32,7 +32,7 @@ en desarrollo y se conserva como primera version visual del panel.
 eBarrio/
   src/
     Main.java                         Demo funcional por consola
-    app/MainApp.java                  Prototipo JavaFX
+    app/MainApp.java                  Interfaz JavaFX inicial
     model/                            Clases de dominio
     sistema/SistemaBarrio.java        Fachada / servicio principal
 documentacion/
@@ -67,6 +67,12 @@ Para probar el flujo especifico de reclamos:
 java -cp out model.solicitud.test.TestReclamo
 ```
 
+Para correr una prueba integral de escenarios:
+
+```powershell
+java -cp out model.solicitud.test.EscenariosEjecucion
+```
+
 Nota: para ejecutar `app.MainApp` se requiere tener JavaFX configurado en el IDE o en el
 classpath/module-path.
 
@@ -79,6 +85,7 @@ classpath/module-path.
 - Avanzar solicitudes por el ciclo Pendiente -> Asignado -> En proceso -> Resuelto -> Cerrado.
 - Cancelar solicitudes desde estados intermedios.
 - Notificar a observadores cuando cambia el estado de una solicitud.
+- Usar una interfaz JavaFX para consultar metricas, tablas y cargar datos principales.
 
 ## Patrones de diseno aplicados
 
@@ -129,9 +136,10 @@ La carpeta `documentacion/` contiene:
 
 ## Estado actual
 
-Cumple la base de implementacion, patrones, paquetes, demo funcional y documentacion
-inicial requerida. Queda pendiente completar o actualizar con el grupo:
+Cumple la base de implementacion, patrones, paquetes, demo funcional, escenarios de
+ejecucion, JavaFX inicial y documentacion requerida. Queda pendiente completar o
+actualizar con el grupo:
 
 - Capturas reales de ejecucion para el informe final.
 - Diagramas exportados a imagen/PDF si la docente no acepta PlantUML fuente.
-- Interfaz JavaFX terminada y configuracion de ejecucion documentada.
+- Configuracion final de JavaFX segun la maquina o IDE usado para la defensa.
