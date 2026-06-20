@@ -6,18 +6,18 @@ Repositorio: https://github.com/sofiruba/eBarrio
 
 ## Checklist de entrega
 
-| Requisito | Estado | Evidencia |
-| --- | --- | --- |
-| Codigo fuente Java completo | Cumple | `eBarrio/src` |
-| Proyecto limpio, ejecutable y sin errores de compilacion | Cumple | Compilado con `javac` y JavaFX SDK 17 sin errores. |
-| Separacion de responsabilidades | Cumple | `app`, `sistema`, `model`, `src/data`, `documentacion`. |
+| Requisito | Estado | Evidencia                                                                                              |
+| --- | --- |--------------------------------------------------------------------------------------------------------|
+| Codigo fuente Java completo | Cumple | `eBarrio/src`                                                                                          |
+| Proyecto limpio, ejecutable y sin errores de compilacion | Cumple | Compilado con `javac` y JavaFX SDK 17 sin errores.                                                     |
+| Separacion de responsabilidades | Cumple | `app`, `sistema`, `model`, `data`, `documentacion`.                                                    |
 | Flujos de negocio requeridos | Cumple | Login, residentes, viviendas, visitantes/proveedores, accesos, solicitudes, notificaciones y persistencia. |
-| Casos de prueba | Cumple | `Main`, `TestReclamo`, `EscenariosEjecucion`. |
-| Historial de versiones | Cumple | Git + resumen en `documentacion/commits_individuales.md`. |
-| Diagramas UML actualizados | Cumple | `documentacion/uml/casos_de_uso.puml` y `documentacion/uml/diagrama_clases.puml`. |
-| Informe final | Cumple | `documentacion/informe_final.md`. |
-| Instrucciones de despliegue | Cumple | README e informe final. |
-| Evidencia de ejecucion | Cumple | Logs documentados en `documentacion/informe_final.md` y `documentacion/escenarios_de_prueba.md`. |
+| Casos de prueba | Cumple | `Main`, `TestReclamo`, `EscenariosEjecucion`.                                                          |
+| Historial de versiones | Cumple | Git + resumen en `documentacion/commits_individuales.md`.                                              |
+| Diagramas UML actualizados | Cumple | `documentacion/uml/casos_de_uso.puml` y `documentacion/uml/diagrama_clases.puml`.                      |
+| Informe final | Cumple | `documentacion/informes/informe final eBarrio.pdf`.                                                    |
+| Instrucciones de despliegue | Cumple | README e informe final.                                                                                |
+| Evidencia de ejecucion | Cumple | Logs documentados en `informe final eBarrio.pdf` y `documentacion/escenarios_de_prueba.md`.            |
 
 ## Flujos implementados
 
@@ -43,7 +43,7 @@ Repositorio: https://github.com/sofiruba/eBarrio
 - `model.accesos`: visitante/proveedor y acceso.
 - `model.solicitud`: solicitudes, factory, observer y estados.
 - `model.notificaciones`: notificaciones.
-- `src/data`: archivos JSON que funcionan como base de datos simple.
+- `data`: archivos JSON que funcionan como base de datos simple.
 
 ## Verificacion tecnica realizada
 
@@ -64,8 +64,3 @@ java -cp /tmp/ebarrio-docs model.solicitud.test.EscenariosEjecucion
 ```
 
 Resultado principal: `Todos los escenarios de ejecucion finalizaron correctamente.`
-
-## Nota final
-
-Si la catedra solicita imagenes en lugar de archivos PlantUML, exportar los `.puml` de
-`documentacion/uml` a PNG o PDF antes de subir la entrega final.

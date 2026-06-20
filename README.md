@@ -29,7 +29,7 @@ solicitudes operativas hasta su cierre.
 - Seguimiento de solicitudes por estados: Pendiente, Asignado, En proceso, Resuelto y Cerrado.
 - Cancelación de solicitudes desde estados intermedios.
 - Notificaciones ante eventos relevantes del sistema.
-- Persistencia simple en archivos JSON dentro de `src/data`.
+- Persistencia simple en archivos JSON dentro de `data`.
 - Interfaz JavaFX con vistas diferenciadas para login, administrador y residente.
 - Escenarios de prueba ejecutables desde clases `main`.
 
@@ -42,19 +42,20 @@ eBarrio/
     app/MainApp.java                  Aplicacion JavaFX y coordinacion de flujos
     app/views/                        Vistas principales: login, admin y residente
     data/                             Datos JSON de prueba y persistencia
+    images/                           Logo del programa
     model/                            Dominio del sistema
       accesos/                        Visitantes y accesos
       barrio/                         Barrio, vivienda y residente
       notificaciones/                 Notificaciones
-      solicitud/                      Solicitudes, estados, factory y pruebas
+      solicitud/                      Solicitudes, estados, factory
+    test/                             Pruebas
     sistema/SistemaBarrio.java        Fachada/controlador de casos de uso
 documentacion/
   cumplimiento.md                     Revision contra la consigna final
   commits_individuales.md             Resumen de participacion en Git
   escenarios_de_prueba.md             Escenarios manuales y automatizables
-  informe_final.md                    Informe final de entrega
   tareas_por_integrante.md            Distribucion de tareas
-  informes/                           Informes de fase 1 y fase 2
+  informes/                           Informes de fase 1, fase 2 y el informe final
   uml/                                Diagramas PlantUML
 ```
 
@@ -104,7 +105,7 @@ https://github.com/sofiruba/eBarrio
 
 ## Cómo ejecutar
 
-La forma recomendada para la defensa es abrir el proyecto en IntelliJ IDEA y ejecutar
+La forma recomendada es abrir el proyecto en IntelliJ IDEA y ejecutar
 `app.MainApp` con JavaFX configurado.
 
 Tambien se puede compilar y ejecutar por consola desde la raíz del repositorio:
@@ -135,6 +136,6 @@ Los usuarios están en `eBarrio/src/data/usuarios.json`. Ejemplos:
 ## Estado para entrega
 
 El código implementa los flujos principales y alternativos requeridos. La documentación
-final se encuentra en `documentacion/informe_final.md`, el checklist de consigna en
+final se encuentra en `documentacion/ifnromes/Informe final eBarrio.pdf`, el checklist de consigna en
 `documentacion/cumplimiento.md`, los escenarios en `documentacion/escenarios_de_prueba.md`
 y los diagramas UML en `documentacion/uml`.
